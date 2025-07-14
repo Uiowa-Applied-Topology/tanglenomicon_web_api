@@ -1,0 +1,7 @@
+repos:
+    -   repo: https://github.com/Joecstarr/validate-sops
+        rev: f1c783cc884ec7b18c386994fe58768ef33c4f70
+        hooks:
+        -   id: validate-sops
+            # Adjust based on your file(s) location and type(s)
+            files: '\.sops\/.*\.yaml$'

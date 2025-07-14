@@ -1,0 +1,10 @@
+creation_rules:
+    - key_groups:
+          - age:
+                - age1h38f5rhv747xk53cmfxq5xc7c5m84gy7ls53wvfszrx9fqqgeskq7k2s27 # Joecstarr
+                - age199sg3yrc42a9d0m38puck4uxrvnq84rtkm9txuqx860x7sz2ms2q3hcl09 # Joecstarr
+                - age1un5qstke56clkzd430anuzh2mchdecc3mptsgzuknqlhs56g23fqd4uylz # Joecstarr
+                - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/FWzMJ7UbYLQPvALsn/KorrwDJXtng65oDvnOuV0zqvZk1ClEKgQ84PTye93oEuiZXN9Tg037lzHN+JUEVnC6l8LensX54Jk7A3t0A4Jx1hZdZ89o1dGoN7flDqIe6th3n0yfK9XCeHvanNqp21fs7Rk61Sa4vL3hWrk0ok0v7Hd4bWlonDvjPzOzzPt6/ASTbK6lSquPzKDUvb+Qzt7LqDTHqppAOL5FinX/KvZ+glyjeagD4HkcWkw2Oew6wzKymS0d6PXzCqc7/oeI7PdubKDqEh+6ZAE98jkDkUrOibUwBntdWBpijXHDcYFbMFsvawKr62H5QrnzZgpgxCfc6i711g4dngWGgZmM2T9HSZpFpP8c9TSzf32j2W3umXeSxZhLGHJ+F5SZuq1Q0m2T9ta7iFL1Zu4BVwT5uSV0PEQoCQq7/NaUgiCFAaE9enIyFpeiEJomvSCN2HpC0ApbiAy2d/ZQrJMzZCc+VqhBpAt2z9hJm73VFIgIP09kKWIf5fMQ5axHu49LKIUpghyAu1+/vsKhUjo2mmk2sUDrbiXzbdNUqddwSDhwKhnufkCsdgnPni9jdpvDu2U3EiR6bfJVrjhksQkrvdQmrY5PZS7s7SK0o5qDcIBP3TXGxGJPFeY8hv75Z9vJ3mx85jWRz0yMBsktS8Ra0Qitfpoyxw==
+                - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJWZKFy4ARcNUXMC4p4Kuj4ZbrWFaWNpIv0JePcYrmeY
+                - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHzWvsKxEP6O1t5DXsQ4P7pdgVxoLtNBu+/Valzp3uO/
+                - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtg4mLZ6D/cggOEKu9VW5AVtMP/AGeqMMK0TzV6mvPI

@@ -43,3 +43,12 @@ live:
 
 charm:
     sh pycharm ./
+
+
+decrypt-sops:
+    sops decrypt .sops/mongo.enc.yaml > .sops/mongo.yaml
+    sops decrypt .sops/mongo_dev.enc.yaml > .sops/mongo_dev.yaml
+
+encrypt-sops:
+    sops encrypt .sops/mongo.yaml > .sops/mongo.enc.yaml
+    sops encrypt .sops/mongo_dev.yaml > .sops/mongo_dev.enc.yaml

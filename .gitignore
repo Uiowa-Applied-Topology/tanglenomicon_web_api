@@ -167,3 +167,5 @@ test/*.svg
 py_venv/*
 shell.nix
 docs/apidocs/*
+.sops/*
+!.sops/*.enc.*
