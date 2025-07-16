@@ -144,16 +144,17 @@ async def _build_job(stencil: List[int], pages: List[int], job_id: str = None) -
             },
         ]
         async for response in rational_col.aggregate(pipeline):
-            if response["metadata"][0]["totalCount"] == 0:
-                raise NameError(
-                    "Rational list is empty."
-                )  # @@@IMPROVEMENT: needs to be updated to exception object
-            lis.extend(
-                [
-                    from_dict(data_class=rat_orm.RationalTangDB, data=rat_tang)._id
-                    for rat_tang in response["data"]
-                ]
-            )
+            if response["metadata"]:
+                if response["metadata"][0]["totalCount"] == 0:
+                    raise NameError(
+                        "Rational list is empty."
+                    )  # @@@IMPROVEMENT: needs to be updated to exception object
+                lis.extend(
+                    [
+                        from_dict(data_class=rat_orm.RationalTangDB, data=rat_tang)._id
+                        for rat_tang in response["data"]
+                    ]
+                )
             ...
 
         job.rat_lists.append(lis)

@@ -19,7 +19,7 @@ from getpass import getpass, getuser
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
+# logging.getLogger().setLevel(logging.DEBUG)
 
 
 loop: AbstractEventLoop = asyncio.new_event_loop()
@@ -28,6 +28,7 @@ routers = [security, mont_ge, mont_pe, arbor_ge, arbor_pe, rat_pe, gen_pe]
 job_defs = [
     mont_j.startup_task,
     arbor_j.startup_task,
+    arbor_j.time_job,
     job_queue.task_clean_complete_jobs,
     job_queue.task_clean_stale_jobs,
 ]

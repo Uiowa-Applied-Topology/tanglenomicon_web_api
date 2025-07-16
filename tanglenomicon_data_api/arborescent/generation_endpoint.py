@@ -6,6 +6,9 @@ from ..interfaces.job import ConfirmJobReceipt
 from . import job as aj
 from ..internal import config_store, job_queue
 from typing import Annotated
+import asyncio
+
+_arbor_job_get_semaphore: asyncio.Lock = asyncio.Lock()
 
 router = APIRouter(
     prefix="/arborescent",
@@ -71,11 +74,7 @@ async def _get_next_arborescent_job(
     HTTPException
         If no job found raise 404.
     """
-    new_arbor_j_cnt = (await job_queue.get_job_statistics(aj.ArborescentJob))["new"]
-    if new_arbor_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
-        await aj.get_jobs(
-            config_store.cfg_dict["job-queue"]["min-new-count"] - new_arbor_j_cnt
-        )
+    global _arbor_job_get_semaphore
     job = await job_queue.get_next_job(aj.ArborescentJob, current_user)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")
