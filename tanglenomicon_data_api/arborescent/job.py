@@ -16,7 +16,7 @@ import hashlib
 
 logger = logging.getLogger("uvicorn")
 
-_stencil_cfg_semaphore: asyncio.Lock = asyncio.Lock()
+_jobget_semaphore: asyncio.Lock = asyncio.Lock()
 _stencil_cfg: orm.StencilCfg = None
 _debounce: datetime = None
 
@@ -145,7 +145,7 @@ def _move_head(stencildb: orm.StencilDB, rootstock_count: int,
     return None
 
 
-async def _get_rootstocklist(acn: int, page: int):
+async def get_rootstocklist(acn: int, page: int):
     col = orm.get_arborescent_collection()
     lis_p = []
     lis_n = []
@@ -184,7 +184,7 @@ async def _get_rootstocklist(acn: int, page: int):
     return lis_p, lis_n, lis_u
 
 
-async def _get_scionlist(acn: int, page: int):
+async def get_scionlist(acn: int, page: int):
     col = orm.get_arborescent_collection()
     lis_p = []
     lis_n = []
@@ -224,60 +224,6 @@ async def _get_scionlist(acn: int, page: int):
     return lis_p, lis_n, lis_u
 
 
-async def _build_job(rootstock_acn: int, scion_acn: int, pages: List[int], id: str,
-                     job_id: str = None) -> str:
-    """Build and enqueue a new Arborescent job.
-
-    Parameters
-    ----------
-    stencil : List[int]
-        The stencil to fill in.
-    pages : List[int]
-        The rational pages to retrieve.
-    job_id : str, optional
-        The id to use for the job, by default None
-
-    Returns
-    -------
-    str
-        The id for the built and enqueued job.
-    """
-    try:
-        if not job_id:
-            m = hashlib.sha256()
-            m.update(id.encode("utf-8"))
-            m.update(pages[0].to_bytes())
-            m.update(pages[1].to_bytes())
-            m.update((rootstock_acn + scion_acn).to_bytes())
-            m.digest()
-            job_id = m.hexdigest()
-
-        job = ArborescentJob(
-            cur_state=JobStateEnum.new,
-            timestamp=datetime.now(timezone.utc),
-            job_id=job_id,
-            grafting_lists=[[]],
-            ACN=rootstock_acn + scion_acn,
-        )
-        rp, rn, ru = await _get_rootstocklist(rootstock_acn, pages[0])
-        sp, sn, su = await _get_scionlist(scion_acn, pages[1])
-        job.grafting_lists = [
-            [rp, ["positive"] * len(rp), sp, ["positive"] * len(sp)],
-            [rp, ["positive"] * len(rp), su, ["neutral"] * len(su)],
-            [ru, ["neutral"] * len(ru), sp, ["positive"] * len(sp)],
-            [rn, ["negative"] * len(rn), sn, ["negative"] * len(sn)],
-            [rn, ["negative"] * len(rn), su, ["neutral"] * len(su)],
-            [ru, ["neutral"] * len(ru), sn, ["negative"] * len(sn)],
-            [ru, ["neutral"] * len(ru), su, ["neutral"] * len(su)],
-        ]
-        await job_queue.enqueue_job(job)
-    except Exception as e:
-        logger.error(f"Exception while building arborescent tangle job: {e}")
-        pass
-    # @@@IMPROVEMENT: this need error handling.
-    return job.job_id
-
-
 class ArborescentJobResults(GenerationJobResults):
     """The implementation of job results for Arborescent jobs."""
 
@@ -289,7 +235,9 @@ class ArborescentJob(GenerationJob):
 
     grafting_lists: List[List[List[str]]]
     ACN: int
-    _stencil: str = None
+    rootstock_acn: int
+    scion_acn: int
+    page: list[int] = None
     _results: ArborescentJobResults = None
     _update_semaphore: asyncio.Lock = asyncio.Lock()
 
@@ -376,6 +324,50 @@ class ArborescentJob(GenerationJob):
         self._results = res
 
 
+async def _build_job(rootstock_acn: int, scion_acn: int, pages: List[int], id: str,
+                     job_id: str = None) -> ArborescentJob:
+    """Build and enqueue a new Arborescent job.
+
+    Parameters
+    ----------
+    stencil : List[int]
+        The stencil to fill in.
+    pages : List[int]
+        The rational pages to retrieve.
+    job_id : str, optional
+        The id to use for the job, by default None
+
+    Returns
+    -------
+    str
+        The id for the built and enqueued job.
+    """
+    try:
+        if not job_id:
+            m = hashlib.sha256()
+            m.update(id.encode("utf-8"))
+            m.update(pages[0].to_bytes())
+            m.update(pages[1].to_bytes())
+            m.update((rootstock_acn + scion_acn).to_bytes())
+            m.digest()
+            job_id = m.hexdigest()
+
+        job = ArborescentJob(
+            cur_state=JobStateEnum.new,
+            timestamp=datetime.now(timezone.utc),
+            job_id=job_id,
+            grafting_lists=[[]],
+            ACN=rootstock_acn + scion_acn,
+            rootstock_acn=rootstock_acn,
+            scion_acn=scion_acn,
+            page=copy.deepcopy(pages),
+        )  # @@@IMPROVEMENT: this need error handling.
+        return job
+    except Exception as e:
+        logger.error(f"Exception while building arborescent tangle job: {e}")
+        return None
+
+
 async def _get_nonzero_jobs(stencil_cfg: orm.StencilCfg, count: int = 1):
     """Get and build a specified number of jobs.
 
@@ -394,24 +386,29 @@ async def _get_nonzero_jobs(stencil_cfg: orm.StencilCfg, count: int = 1):
                 data=stencildb,
             )
             if stencil.state == orm.StencilStateEnum.new:
-                job_id = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
-                                          stencil.head, str(stencil._id))
+                stencil.state = orm.StencilStateEnum.started
+                job = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
+                                       stencil.head, str(stencil._id))
                 stencil.open_jobs.append(
-                    orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy(stencil.head))
+                    orm.StencilJobDB(job_id=job.job_id, cursor=copy.deepcopy(stencil.head))
                 )
-            stencil.state = orm.StencilStateEnum.started
+                await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+                await job_queue.enqueue_job(job)
             while count > 0:
                 count -= 1
                 if _move_head(stencil, stencil_cfg.current_counts[stencil.rootstock_acn],
                               stencil_cfg.current_good_counts[
                                   stencil.scion_acn]) == orm.StencilHeadStateEnum.no_headroom:
                     stencil.state = orm.StencilStateEnum.no_headroom
+                    await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
                     break
-                job_id = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
-                                          stencil.head, str(stencil._id))
+                job = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
+                                       stencil.head, str(stencil._id))
                 stencil.open_jobs.append(
-                    orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy(stencil.head))
+                    orm.StencilJobDB(job_id=job.job_id, cursor=copy.deepcopy(stencil.head))
                 )
+                await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+                await job_queue.enqueue_job(job)
 
             await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
     except Exception as e:
@@ -436,25 +433,30 @@ async def _get_zero_job(stencil_cfg: orm.StencilCfg, count: int):
                 data=stencildb,
             )
             if stencil.state == orm.StencilStateEnum.new:
-                job_id = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
-                                          stencil.head, str(stencil._id))
-                stencil.open_jobs.append(
-                    orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy(stencil.head))
-                )
+                job = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
+                                       stencil.head, str(stencil._id))
                 stencil.state = orm.StencilStateEnum.started
+                stencil.open_jobs.append(
+                    orm.StencilJobDB(job_id=job.job_id, cursor=copy.deepcopy(stencil.head))
+                )
+                await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+                await job_queue.enqueue_job(job)
             while count > 0:
                 count -= 1
                 if _move_head(stencil, stencil_cfg.current_counts[stencil.rootstock_acn],
                               stencil_cfg.current_good_counts[
                                   stencil.scion_acn]) == orm.StencilHeadStateEnum.no_headroom:
                     stencil.state = orm.StencilStateEnum.no_headroom
+                    await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
                     break
 
-                job_id = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
-                                          stencil.head, str(stencil._id))
+                job = await _build_job(stencil.rootstock_acn, stencil.scion_acn,
+                                       stencil.head, str(stencil._id))
                 stencil.open_jobs.append(
-                    orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy(stencil.head))
+                    orm.StencilJobDB(job_id=job.job_id, cursor=copy.deepcopy(stencil.head))
                 )
+                await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+                await job_queue.enqueue_job(job)
 
             await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
     except Exception as e:
@@ -489,32 +491,35 @@ async def startup_task():
     global _stencil_cfg
     stencil_col = orm.get_stencil_collection()
     _stencil_cfg = await  _get_stencil_config()
-    async with _stencil_cfg_semaphore:
-        async for stencildb in stencil_col.find(
-            _started_stencil(_stencil_cfg.current_completed_acn + 1)):
-            stencil = from_dict(data_class=orm.StencilDB, data=stencildb)
+    async for stencildb in stencil_col.find(
+        _started_stencil(_stencil_cfg.current_completed_acn + 1)):
+        stencil = from_dict(data_class=orm.StencilDB, data=stencildb)
 
-            async def aiter_open_jobs():
-                for open_item in stencil.open_jobs:
-                    yield open_item
+        async def aiter_open_jobs():
+            for open_item in stencil.open_jobs:
+                yield open_item
 
-            async for open_item in aiter_open_jobs():
-                await _build_job(stencil.rootstock_acn, stencil.scion_acn,
-                                 stencil.head, str(stencil._id),
-                                 job_id=open_item.job_id
-                                 )
-                ...
+        async for open_item in aiter_open_jobs():
+            job = await _build_job(stencil.rootstock_acn,
+                                   stencil.scion_acn,
+                                   open_item.cursor,
+                                   str(stencil._id),
+                                   job_id=open_item.job_id
+                                   )
+            await job_queue.enqueue_job(job)
+
             ...
-    new_arbor_j_cnt = (await job_queue.get_job_statistics(ArborescentJob))["new"]
-    if new_arbor_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
-        await  _update_stencil_zero_config()
-        await get_jobs(config_store.cfg_dict["job-queue"]["min-new-count"] - new_arbor_j_cnt)
         ...
 
 
 async def time_job():
     """Task to run at startup to initialize Arborescent jobs."""
+    global _jobget_semaphore
     while True:
         await asyncio.sleep(1)
-        await get_jobs(config_store.cfg_dict["job-queue"]["min-new-count"])
-        ...
+        async with _jobget_semaphore:
+            new_arbor_j_cnt = (await job_queue.get_job_statistics(ArborescentJob))["new"]
+            if new_arbor_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"]:
+                await get_jobs(
+                    config_store.cfg_dict["job-queue"]["min-new-count"] - new_arbor_j_cnt)
+            ...

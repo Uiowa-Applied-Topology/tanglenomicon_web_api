@@ -135,6 +135,8 @@ def _is_above_time_delta(then: datetime) -> bool:
 async def _clean_stale_jobs():
     """Clean job queue of stale jobs."""
     global _job_queue
+    global jq_semaphore
+    global task_semaphore
     logger.debug("Clean stale jobs.")
 
     async with task_semaphore:
@@ -152,6 +154,8 @@ async def _clean_stale_jobs():
 async def _clean_complete_jobs():
     """Store complete jobs into DB."""
     global _job_queue
+    global jq_semaphore
+    global task_semaphore
     async with task_semaphore:
         async with jq_semaphore:
             items: List[GenerationJob] = [
@@ -218,6 +222,7 @@ async def get_next_job(
         The job to feed the user or None if none exist.
     """
     global _job_queue
+    global jq_semaphore
     job = None
     async with jq_semaphore:
         items = [
@@ -247,6 +252,7 @@ async def enqueue_job(job: GenerationJob) -> bool:
         ``True`` if job is enqueued ``False`` otherwise.
     """
     global _job_queue
+    global jq_semaphore
     enqueued = False
     async with jq_semaphore:
         if job.job_id not in _job_queue:
