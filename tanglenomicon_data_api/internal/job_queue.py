@@ -4,14 +4,12 @@ from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal.security import User
 from . import config_store
 
-
 from typing import Dict, Type, List
 from datetime import datetime, timezone
 import asyncio
 import logging
 
 logger = logging.getLogger("uvicorn")
-
 
 _job_queue: Dict[str, GenerationJob] = dict()
 
@@ -38,9 +36,11 @@ async def _get_count(job_type: Type[GenerationJob] = GenerationJob) -> int:
     int
         The count.
     """
-    return len(
-        [i async for i in aiter(aiterjq()) if isinstance(_job_queue[i], job_type)]
-    )
+    global jq_semaphore
+    async with jq_semaphore:
+        return len(
+            [i async for i in aiter(aiterjq()) if isinstance(_job_queue[i], job_type)]
+        )
 
 
 async def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
@@ -56,14 +56,16 @@ async def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
     int
         The count.
     """
-    return len(
-        [
-            i
-            async for i in aiter(aiterjq())
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == JobStateEnum.new
-        ]
-    )
+    global jq_semaphore
+    async with jq_semaphore:
+        return len(
+            [
+                i
+                async for i in aiter(aiterjq())
+                if isinstance(_job_queue[i], job_type)
+                   and _job_queue[i].cur_state == JobStateEnum.new
+            ]
+        )
 
 
 async def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> int:
@@ -79,14 +81,17 @@ async def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> 
     int
         The count.
     """
-    return len(
-        [
-            i
-            async for i in aiter(aiterjq())
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == JobStateEnum.complete
-        ]
-    )
+
+    global jq_semaphore
+    async with jq_semaphore:
+        return len(
+            [
+                i
+                async for i in aiter(aiterjq())
+                if isinstance(_job_queue[i], job_type)
+                   and _job_queue[i].cur_state == JobStateEnum.complete
+            ]
+        )
 
 
 async def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> int:
@@ -102,14 +107,16 @@ async def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> i
     int
         The count.
     """
-    return len(
-        [
-            i
-            async for i in aiter(aiterjq())
-            if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == JobStateEnum.pending
-        ]
-    )
+    global jq_semaphore
+    async with jq_semaphore:
+        return len(
+            [
+                i
+                async for i in aiter(aiterjq())
+                if isinstance(_job_queue[i], job_type)
+                   and _job_queue[i].cur_state == JobStateEnum.pending
+            ]
+        )
 
 
 def _is_above_time_delta(then: datetime) -> bool:
@@ -145,10 +152,11 @@ async def _clean_stale_jobs():
                 _job_queue[i]
                 async for i in aiter(aiterjq())
                 if (_is_above_time_delta(_job_queue[i].timestamp))
-                and (_job_queue[i].cur_state != JobStateEnum.complete)
+                   and (_job_queue[i].cur_state != JobStateEnum.complete)
+                   and (_job_queue[i].cur_state != JobStateEnum.new)
             ]
-        for item in items:
-            item.cur_state = JobStateEnum.new
+            for item in items:
+                item.cur_state = JobStateEnum.new
 
 
 async def _clean_complete_jobs():
@@ -164,10 +172,17 @@ async def _clean_complete_jobs():
                 if _job_queue[i].cur_state == JobStateEnum.complete
             ]
         logger.info(f"Storing {len(items)} jobs.")
-        for item in items:
+
+        async def aiter_col(collection):
+            """sdfsdfsdf."""
+            for i in collection:
+                yield i
+
+        async for item in aiter_col(items):
             try:
                 await item.store()
-                del _job_queue[item.job_id]
+                async with jq_semaphore:
+                    del _job_queue[item.job_id]
             except Exception as e:
                 logger.error(f"Exception while processing job {item.job_id}: {e}")
                 pass
@@ -191,15 +206,19 @@ async def mark_job_complete(results: GenerationJobResults, current_user: User) -
     global _job_queue
     logger.debug("Mark job complete.")
     marked = False
-    if (
-        results.job_id in _job_queue
-        and _job_queue[results.job_id].cur_state == JobStateEnum.pending
-        and _job_queue[results.job_id].client_id == current_user.username
-    ):
-        job: GenerationJob = _job_queue[results.job_id]
-        job.update_results(results)
-        job.cur_state = JobStateEnum.complete
-        marked = True
+    global _jq_semephore
+    async with jq_semaphore:
+        if (
+            results.job_id in _job_queue
+            and _job_queue[results.job_id].cur_state == JobStateEnum.pending
+            and _job_queue[results.job_id].client_id == current_user.username
+        ):
+            job: GenerationJob = _job_queue[results.job_id]
+            job.update_results(results)
+            job.cur_state = JobStateEnum.complete
+            marked = True
+        else:
+            ...
     # @@@IMPROVEMENT: should add logging here.
     return marked
 
@@ -229,12 +248,14 @@ async def get_next_job(
             i
             async for i in aiter(aiterjq())
             if isinstance(_job_queue[i], job_type)
-            and _job_queue[i].cur_state == JobStateEnum.new
+               and _job_queue[i].cur_state == JobStateEnum.new
         ]
         if len(items) > 0:
             _job_queue[items[0]].cur_state = JobStateEnum.pending
             _job_queue[items[0]].client_id = current_user.username
             job = _job_queue[items[0]]
+        else:
+            ...
     return job
 
 

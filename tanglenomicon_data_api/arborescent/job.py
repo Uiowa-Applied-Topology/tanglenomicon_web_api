@@ -310,9 +310,8 @@ class ArborescentJob(GenerationJob):
         if len(tangles_2_store) > 0:
             ret_val = True
             try:
-                await arborescent_col.bulk_write(tangles_2_store)
+                await arborescent_col.bulk_write(tangles_2_store, ordered=False)
                 await self._update_stencil()
-
             except Exception as e:
                 logger.error(f"Exception while storing arborescent tangles: {e}")
                 ret_val = False
@@ -346,9 +345,8 @@ async def _build_job(rootstock_acn: int, scion_acn: int, pages: List[int], id: s
         if not job_id:
             m = hashlib.sha256()
             m.update(id.encode("utf-8"))
-            m.update(pages[0].to_bytes())
-            m.update(pages[1].to_bytes())
-            m.update((rootstock_acn + scion_acn).to_bytes())
+            m.update(str(pages[0]).encode("utf-8"))
+            m.update(str(pages[1]).encode("utf-8"))
             m.digest()
             job_id = m.hexdigest()
 
