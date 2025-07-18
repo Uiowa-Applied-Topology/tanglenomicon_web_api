@@ -6,29 +6,38 @@ from dataclasses import dataclass
 from bson import ObjectId
 from ..internal import db_connector as dbc
 from ..internal import config_store as cfg
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from pymongo.asynchronous.collection import AsyncCollection
+
+_sten_col: AsyncCollection = None
+_arbor_col: AsyncCollection = None
 
 
-def get_stencil_collection() -> AsyncIOMotorDatabase:
+def get_stencil_collection() -> AsyncCollection:
     """Return the mongodb collection containing the Arborescent stencils.
 
     Returns
     -------
-    AsyncIOMotorDatabase
+    AsyncCollection
         The Arborescent stencils collection.
     """
-    return dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+    global _sten_col
+    if _sten_col is None:
+        _sten_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+    return _sten_col
 
 
-def get_arborescent_collection() -> AsyncIOMotorDatabase:
+def get_arborescent_collection() -> AsyncCollection:
     """Return the mongodb collection containing the Arborescent tangles.
 
     Returns
     -------
-    AsyncIOMotorDatabase
+    AsyncCollection
         The Arborescent tangles collection.
     """
-    return dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
+    global _arbor_col
+    if _arbor_col is None:
+        _arbor_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
+    return _arbor_col
 
 
 class StencilHeadStateEnum(str, Enum):
@@ -52,7 +61,8 @@ class StencilJobDB:
     """A subjob for a stencil to be read/written to/from a collection."""
 
     job_id: str
-    cursor: List[int]
+    cursor: List[str]
+
 
 @dataclass
 class StencilCfg:
@@ -62,6 +72,7 @@ class StencilCfg:
     max_acn: int
     _id: str
 
+
 @dataclass
 class StencilDB:
     """A stencil to be read/written to/from a collection."""
@@ -69,8 +80,8 @@ class StencilDB:
     ACN: int
     rootstock_acn: int
     scion_acn: int
-    head: List[int]
     state: int
+    job_backlog: List[StencilJobDB]
     open_jobs: List[StencilJobDB]
 
 
@@ -78,7 +89,18 @@ class StencilDB:
 class ArborescentTangleDB:
     """A montesinos tangle to be read from the tangle collection."""
 
-    _id: str
+    _id: ObjectId
+    notation:str
+    positivity: str
+    parents: List[List[str]]
+    is_good: bool
+    ACN: int
+
+@dataclass
+class ArborescentTangle:
+    """A montesinos tangle to be read from the tangle collection."""
+
+    notation:str
     positivity: str
     parents: List[List[str]]
     is_good: bool

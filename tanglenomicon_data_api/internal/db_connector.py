@@ -6,12 +6,14 @@ NameError
     Connection error occurred.
 """
 
-import motor.motor_asyncio
+from pymongo import AsyncMongoClient
+from pymongo.asynchronous.database import AsyncDatabase
+
 import urllib.parse
 
-client: motor.motor_asyncio = None
+client: AsyncMongoClient = None
 
-db: dict[str, motor.motor_asyncio.AsyncIOMotorDatabase] = None
+db: AsyncDatabase = None
 
 
 def init_client(url: str, port: int, username: str, password: str, database_name: str):
@@ -40,10 +42,11 @@ def init_client(url: str, port: int, username: str, password: str, database_name
     if url and port and username and password:
         username = urllib.parse.quote_plus(username)
         password = urllib.parse.quote_plus(password)
-        client = motor.motor_asyncio.AsyncIOMotorClient(
-            f"mongodb://{username}:{password}@{url}:{port}/?authSource=admin&retryWrites=true&w=majority"  # noqa: E501
+        client = AsyncMongoClient(
+            f"mongodb://{username}:{password}@{url}:{port}/?authSource=admin&retryWrites=true&w=majority"
+            # noqa: E501
         )
-        db = motor.motor_asyncio.AsyncIOMotorDatabase(client, database_name)
+        db = client[database_name]
     else:
         raise NameError(
             "db connection error"

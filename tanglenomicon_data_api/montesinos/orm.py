@@ -6,10 +6,10 @@ from dataclasses import dataclass
 from bson import ObjectId
 from ..internal import db_connector as dbc
 from ..internal import config_store as cfg
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from pymongo.asynchronous.collection import AsyncCollection
 
 
-def get_stencil_collection() -> AsyncIOMotorDatabase:
+def get_stencil_collection() -> AsyncCollection:
     """Return the mongodb collection containing the Montesinos stencils.
 
     Returns
@@ -20,7 +20,7 @@ def get_stencil_collection() -> AsyncIOMotorDatabase:
     return dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
 
 
-def get_montesinos_collection() -> AsyncIOMotorDatabase:
+def get_montesinos_collection() -> AsyncCollection:
     """Return the mongodb collection containing the Montesinos tangles.
 
     Returns

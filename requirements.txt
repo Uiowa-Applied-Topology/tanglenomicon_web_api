@@ -30,7 +30,6 @@ numpy
 pyyaml
 uvicorn[standard]
 fastapi
-motor
 pymongo
 passlib[bcrypt]
 python-jose[cryptography]

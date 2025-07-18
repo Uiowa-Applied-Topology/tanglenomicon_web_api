@@ -78,10 +78,10 @@ async def _retrieve_arborescent_tangles(
     ]
 
 
-@router.get("/tangles", response_model=List[orm.ArborescentTangleDB])
+@router.get("/tangles", response_model=List[orm.ArborescentTangle])
 async def retrieve_arborescent_tangles(
     tangle_list: Annotated[
-        List[orm.ArborescentTangleDB], Depends(_retrieve_arborescent_tangles)
+        List[orm.ArborescentTangle], Depends(_retrieve_arborescent_tangles)
     ]
 ):
     """Return the next arborescent job.

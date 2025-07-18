@@ -20,7 +20,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from motor.motor_asyncio import AsyncIOMotorCollection
+from pymongo.asynchronous.collection import AsyncCollection
+
 from . import db_connector as dbc
 from . import config_store
 
@@ -142,12 +143,12 @@ def _verify_password(plain_password: str, hashed_password: str) -> bool:
     return _pwd_context.verify(plain_password, hashed_password)
 
 
-async def _get_user(auth_col: AsyncIOMotorCollection, username: str) -> UserInDB | None:
+async def _get_user(auth_col: AsyncCollection, username: str) -> UserInDB | None:
     """Find and return the user from the auth collection or None.
 
     Parameters
     ----------
-    auth_col : AsyncIOMotorCollection
+    auth_col : AsyncCollection
         The mongodb auth collection.
     username : str
         The user to find in the collection.
@@ -163,13 +164,13 @@ async def _get_user(auth_col: AsyncIOMotorCollection, username: str) -> UserInDB
 
 
 async def _authenticate_user(
-    auth_col: AsyncIOMotorCollection, username: str, password: str
+    auth_col: AsyncCollection, username: str, password: str
 ) -> UserInDB | bool:
     """Return ``True``/``False`` based on if user exists and password matches.
 
     Parameters
     ----------
-    auth_col : AsyncIOMotorCollection
+    auth_col : AsyncCollection
         The mongodb auth collection.
     username : str
         The user to find in the collection.
@@ -189,12 +190,12 @@ async def _authenticate_user(
     return user
 
 
-def _get_collection() -> AsyncIOMotorCollection:
+def _get_collection() -> AsyncCollection:
     """Return a reference to the mongodb auth collection.
 
     Returns
     -------
-    AsyncIOMotorCollection
+    AsyncCollection
         A reference to the auth collection.
     """
     return dbc.db[config_store.cfg_dict["auth"]["auth-col-name"]]
@@ -256,7 +257,7 @@ async def auth_current_user(token: Annotated[str, Depends(_oauth2_scheme)]) -> b
 
 async def get_current_user(
     token: Annotated[str, Depends(_oauth2_scheme)],
-    auth_col: Annotated[AsyncIOMotorCollection, Depends(_get_collection)],
+    auth_col: Annotated[AsyncCollection, Depends(_get_collection)],
 ) -> UserInDB:
     """Retrieve a user from the auth collection given a token.
 
@@ -264,7 +265,7 @@ async def get_current_user(
     ----------
     token : Annotated[str, Depends
         A jwt token supplied by the user.
-    auth_col : Annotated[AsyncIOMotorCollection, Depends
+    auth_col : Annotated[AsyncCollection, Depends
         A reference to an auth collection.
 
     Returns
@@ -357,7 +358,7 @@ async def read_users_me(
 @router.post("/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    auth_col: Annotated[AsyncIOMotorCollection, Depends(_get_collection)],
+    auth_col: Annotated[AsyncCollection, Depends(_get_collection)],
 ) -> Token:
     """Generate a token for the current user.
 
@@ -365,7 +366,7 @@ async def login_for_access_token(
     ----------
     form_data : Annotated[OAuth2PasswordRequestForm, Depends
         The data submitted by the user.
-    auth_col : Annotated[AsyncIOMotorCollection, Depends
+    auth_col : Annotated[AsyncCollection, Depends
         The mongodb auth collection.
 
     Returns

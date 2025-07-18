@@ -1,17 +1,17 @@
 """Defines the ORM for generic tangles."""
 
 from dataclasses import dataclass
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from pymongo.asynchronous.collection import AsyncCollection
 from ..internal import db_connector as dbc
 from ..internal import config_store as cfg
 
 
-def get_generic_collection() -> AsyncIOMotorDatabase:
+def get_generic_collection() -> AsyncCollection:
     """Return the mongodb collection containing the generic tangles.
 
     Returns
     -------
-    AsyncIOMotorDatabase
+    AsyncCollection
         The generic tangles collection.
     """
     return dbc.db[cfg.cfg_dict["tangle-classes"]["generic"]["col_name"]]

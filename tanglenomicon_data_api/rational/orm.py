@@ -2,12 +2,12 @@
 
 from dataclasses import dataclass
 from typing import List
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from pymongo.asynchronous.collection import AsyncCollection
 from ..internal import db_connector as dbc
 from ..internal import config_store as cfg
 
 
-def get_rational_collection() -> AsyncIOMotorDatabase:
+def get_rational_collection() -> AsyncCollection:
     """Return the mongodb collection containing the rational tangles.
 
     Returns
