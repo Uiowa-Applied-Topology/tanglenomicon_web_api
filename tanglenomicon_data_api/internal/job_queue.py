@@ -13,8 +13,8 @@ logger = logging.getLogger("uvicorn")
 
 _job_queue: Dict[str, GenerationJob] = dict()
 
-jq_semaphore: asyncio.Lock = asyncio.Lock()
-task_semaphore: asyncio.Lock = asyncio.Lock()
+jq_lock: asyncio.Lock = asyncio.Lock()
+task_lock: asyncio.Lock = asyncio.Lock()
 
 
 async def aiterjq():
@@ -36,8 +36,8 @@ async def _get_count(job_type: Type[GenerationJob] = GenerationJob) -> int:
     int
         The count.
     """
-    global jq_semaphore
-    async with jq_semaphore:
+    global jq_lock
+    async with jq_lock:
         return len(
             [i async for i in aiter(aiterjq()) if isinstance(_job_queue[i], job_type)]
         )
@@ -56,8 +56,8 @@ async def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
     int
         The count.
     """
-    global jq_semaphore
-    async with jq_semaphore:
+    global jq_lock
+    async with jq_lock:
         return len(
             [
                 i
@@ -82,8 +82,8 @@ async def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> 
         The count.
     """
 
-    global jq_semaphore
-    async with jq_semaphore:
+    global jq_lock
+    async with jq_lock:
         return len(
             [
                 i
@@ -107,8 +107,8 @@ async def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> i
     int
         The count.
     """
-    global jq_semaphore
-    async with jq_semaphore:
+    global jq_lock
+    async with jq_lock:
         return len(
             [
                 i
@@ -142,12 +142,12 @@ def _is_above_time_delta(then: datetime) -> bool:
 async def _clean_stale_jobs():
     """Clean job queue of stale jobs."""
     global _job_queue
-    global jq_semaphore
-    global task_semaphore
+    global jq_lock
+    global task_lock
     logger.debug("Clean stale jobs.")
 
-    async with task_semaphore:
-        async with jq_semaphore:
+    async with task_lock:
+        async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
                 async for i in aiter(aiterjq())
@@ -162,10 +162,10 @@ async def _clean_stale_jobs():
 async def _clean_complete_jobs():
     """Store complete jobs into DB."""
     global _job_queue
-    global jq_semaphore
-    global task_semaphore
-    async with task_semaphore:
-        async with jq_semaphore:
+    global jq_lock
+    global task_lock
+    async with task_lock:
+        async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
                 async for i in aiter(aiterjq())
@@ -173,15 +173,13 @@ async def _clean_complete_jobs():
             ]
         logger.info(f"Storing {len(items)} jobs.")
 
-        async def aiter_col(collection):
-            """sdfsdfsdf."""
-            for i in collection:
-                yield i
+        async with asyncio.TaskGroup() as tg:
+            for item in items:
+                tg.create_task(item.store())
 
-        async for item in aiter_col(items):
+        for item in items:
             try:
-                await item.store()
-                async with jq_semaphore:
+                async with jq_lock:
                     del _job_queue[item.job_id]
             except Exception as e:
                 logger.error(f"Exception while processing job {item.job_id}: {e}")
@@ -207,7 +205,7 @@ async def mark_job_complete(results: GenerationJobResults, current_user: User) -
     logger.debug("Mark job complete.")
     marked = False
     global _jq_semephore
-    async with jq_semaphore:
+    async with jq_lock:
         if (
             results.job_id in _job_queue
             and _job_queue[results.job_id].cur_state == JobStateEnum.pending
@@ -241,9 +239,9 @@ async def get_next_job(
         The job to feed the user or None if none exist.
     """
     global _job_queue
-    global jq_semaphore
+    global jq_lock
     job = None
-    async with jq_semaphore:
+    async with jq_lock:
         items = [
             i
             async for i in aiter(aiterjq())
@@ -273,9 +271,9 @@ async def enqueue_job(job: GenerationJob) -> bool:
         ``True`` if job is enqueued ``False`` otherwise.
     """
     global _job_queue
-    global jq_semaphore
+    global jq_lock
     enqueued = False
-    async with jq_semaphore:
+    async with jq_lock:
         if job.job_id not in _job_queue:
             _job_queue[job.job_id] = job
             enqueued = True

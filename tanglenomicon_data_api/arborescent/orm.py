@@ -20,10 +20,11 @@ def get_stencil_collection() -> AsyncCollection:
     AsyncCollection
         The Arborescent stencils collection.
     """
-    global _sten_col
-    if _sten_col is None:
-        _sten_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
-    return _sten_col
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+    # global _sten_col
+    # if _sten_col is None:
+    #     _sten_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+    # return _sten_col
 
 
 def get_arborescent_collection() -> AsyncCollection:
@@ -34,10 +35,11 @@ def get_arborescent_collection() -> AsyncCollection:
     AsyncCollection
         The Arborescent tangles collection.
     """
-    global _arbor_col
-    if _arbor_col is None:
-        _arbor_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
-    return _arbor_col
+    # global _arbor_col
+    # if _arbor_col is None:
+    #     _arbor_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
+    # return _arbor_col
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
 
 
 class StencilHeadStateEnum(str, Enum):
@@ -61,7 +63,7 @@ class StencilJobDB:
     """A subjob for a stencil to be read/written to/from a collection."""
 
     job_id: str
-    cursor: List[str]
+    cursor: List[ObjectId]
 
 
 @dataclass
@@ -92,7 +94,7 @@ class ArborescentTangleDB:
     _id: ObjectId
     notation:str
     positivity: str
-    parents: List[List[str]]
+    # parents: List[List[str]]
     is_good: bool
     ACN: int
 
@@ -102,6 +104,5 @@ class ArborescentTangle:
 
     notation:str
     positivity: str
-    parents: List[List[str]]
     is_good: bool
     ACN: int

@@ -17,8 +17,8 @@ import itertools
 
 logger = logging.getLogger("uvicorn")
 
-_jobget_lock: asyncio.Lock = asyncio.Lock()
 _jobbuild_sem: asyncio.Semaphore = asyncio.Semaphore(10)
+_store_sem: asyncio.Semaphore = asyncio.Semaphore(10)
 _stencil_cfg: orm.StencilCfg = None
 _debounce: datetime = None
 
@@ -133,33 +133,6 @@ async def _update_stencil_zero_config():
     await stencil_col.replace_one({"_id": _stencil_cfg._id}, asdict(_stencil_cfg))
 
 
-async def _get_lists(pipeline):
-    lis_p = []
-    lis_n = []
-    lis_u = []
-    col = orm.get_arborescent_collection()
-    tan_lis = [tang async for tang in
-               col.find(pipeline, projection={ "notation": 1,"positivity":1 }).limit(
-                   int(config_store.cfg_dict["tangle-classes"]["arborescent"][
-                           "page_size"]))]
-
-    lis_p.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "positive"])
-    lis_n.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "negative"])
-    lis_u.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "neutral"])
-    return lis_p, lis_n, lis_u
-
-
-async def get_rootstocklist(acn: int, page: int):
-    pipeline = {"_id": {"$gte": ObjectId(page)}, "ACN": acn}
-    return await _get_lists(pipeline)
-
-
-async def get_scionlist(acn: int, page: str):
-    pipeline = {"_id": {"$gte": ObjectId(page)}, "ACN": acn, "is_good": True}
-    return await _get_lists(pipeline)
-
-
-
 class ArborescentJobResults(GenerationJobResults):
     """The implementation of job results for Arborescent jobs."""
 
@@ -173,8 +146,51 @@ class ArborescentJob(GenerationJob):
     ACN: int
     rootstock_acn: int
     scion_acn: int
-    page: list[str] = None
+    _page: List[ObjectId] = None
     _results: ArborescentJobResults = None
+
+    def set_page(self, page: List[ObjectId]):
+        self._page = page
+
+    def get_page(self):
+        return self._page
+
+    async def _get_lists(self, pipeline):
+        lis_p = []
+        lis_n = []
+        lis_u = []
+        col = orm.get_arborescent_collection()
+        tan_lis = [tang async for tang in
+                   col.find(pipeline, projection={"notation": 1, "positivity": 1}).limit(
+                       int(config_store.cfg_dict["tangle-classes"]["arborescent"][
+                               "page_size"]))]
+
+        lis_p.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "positive"])
+        lis_n.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "negative"])
+        lis_u.extend([tang["notation"] for tang in tan_lis if tang["positivity"] == "neutral"])
+        return lis_p, lis_n, lis_u
+
+    async def _get_rootstocklist(self, acn: int, page: ObjectId):
+        pipeline = {"_id": {"$gte": page}, "ACN": acn}
+        return await self._get_lists(pipeline)
+
+    async def _get_scionlist(self, acn: int, page: ObjectId):
+        pipeline = {"_id": {"$gte": page}, "ACN": acn, "is_good": True}
+        return await self._get_lists(pipeline)
+
+    async def get_lists(self):
+
+        rp, rn, ru = await self._get_rootstocklist(self.rootstock_acn, self._page[0])
+        sp, sn, su = await self._get_scionlist(self.scion_acn, self._page[1])
+        self.grafting_lists = [
+            [rp, ["positive"] * len(rp), sp, ["positive"] * len(sp)],
+            [rp, ["positive"] * len(rp), su, ["neutral"] * len(su)],
+            [ru, ["neutral"] * len(ru), sp, ["positive"] * len(sp)],
+            [rn, ["negative"] * len(rn), sn, ["negative"] * len(sn)],
+            [rn, ["negative"] * len(rn), su, ["neutral"] * len(su)],
+            [ru, ["neutral"] * len(ru), sn, ["negative"] * len(sn)],
+            [ru, ["neutral"] * len(ru), su, ["neutral"] * len(su)],
+        ]
 
     async def _update_stencil(self):
         """Update the parent stencil."""
@@ -190,21 +206,9 @@ class ArborescentJob(GenerationJob):
             ret_val = False
             pass
 
-        i = [j.job_id for j in stencil.open_jobs].index(self.job_id)
-        stencil.open_jobs.pop(i)
         result = await stencil_col.update_one({"_id": stencil._id},
                                               {"$pull": {"open_jobs": {"job_id": self.job_id}}})
         ...
-
-        if (
-            stencil.state == orm.StencilStateEnum.no_headroom
-            and len(stencil.open_jobs) == 0
-        ):
-            stencil.state = orm.StencilStateEnum.complete
-            result = await stencil_col.update_one({"_id": stencil._id},
-                                                  {"$set": {
-                                                      "state": orm.StencilStateEnum.complete}})
-            ...
 
     async def store(self) -> bool:
         """Store the current job into the Arborescent tangle collection.
@@ -214,45 +218,47 @@ class ArborescentJob(GenerationJob):
         bool
             Indicator for success of storage.
         """
+        global _store_sem
         ret_val = False
-        arborescent_col = orm.get_arborescent_collection()
+        async with _store_sem:
+            arborescent_col = orm.get_arborescent_collection()
 
-        async def aiter_results():
-            for tang in self._results.arbor_list:
-                yield tang
+            async def aiter_results():
+                for tang in self._results.arbor_list:
+                    yield tang
 
-        tangles_2_store = [
-            UpdateOne(
-                {"notation": str(tang.notation)},
-                {
-                    "$set": {
-                        "positivity": tang.positivity,
-                        "is_good": tang.is_good,
-                        "ACN": tang.ACN,
-                    }
-                },
-                upsert=True,
-            )
-            async for tang in aiter_results()
-        ]
-        tangles_2_store.extend([
-            UpdateOne(
-                {"notation": str(tang.notation)},
-                {"$push": {"parents": [rs_set[0], rs_set[1]]}},
-                upsert=True,
-            )
-            async for tang in aiter_results() for rs_set in tang.parents
-        ])
+            tangles_2_store = [
+                UpdateOne(
+                    {"notation": str(tang.notation)},
+                    {
+                        "$set": {
+                            "positivity": tang.positivity,
+                            "is_good": tang.is_good,
+                            "ACN": tang.ACN,
+                        }
+                    },
+                    upsert=True,
+                )
+                async for tang in aiter_results()
+            ]
+            # tangles_2_store.extend([
+            #     UpdateOne(
+            #         {"notation": str(tang.notation)},
+            #         {"$push": {"parents": [rs_set[0], rs_set[1]]}},
+            #         upsert=True,
+            #     )
+            #     async for tang in aiter_results() for rs_set in tang.parents
+            # ])
 
-        ret_val = True
-        if len(tangles_2_store) > 0:
-            try:
-                await arborescent_col.bulk_write(tangles_2_store, ordered=False)
-            except Exception as e:
-                logger.error(f"Exception while storing arborescent tangles: {e}")
-                ret_val = False
-                pass
-        await self._update_stencil()
+            ret_val = True
+            if len(tangles_2_store) > 0:
+                try:
+                    await arborescent_col.bulk_write(tangles_2_store, ordered=False)
+                except Exception as e:
+                    logger.error(f"Exception while storing arborescent tangles: {e}")
+                    ret_val = False
+                    pass
+            await self._update_stencil()
         return ret_val
 
     def update_results(self, res: ArborescentJobResults):
@@ -260,52 +266,58 @@ class ArborescentJob(GenerationJob):
         self._results = res
 
 
-_jobget_lock
-
-
-async def _build_jobs(stencil_cfg: orm.StencilCfg, stencil: orm.StencilDB):
-    stencil_col = orm.get_stencil_collection()
+async def _build_cursor_list(mongo_filter):
     arbor_col = orm.get_arborescent_collection()
+    page_list = []
+    cursor = \
+        (await arbor_col.find_one(mongo_filter, {"_id": 1}))[
+            "_id"]
+    page_list.append(cursor)
+    while tangdb := (await arbor_col.find(
+        {"$and": [mongo_filter, {"_id": {"$gte": cursor}}]},
+        {"_id": 1}).skip(
+        int(config_store.cfg_dict["tangle-classes"]["arborescent"]["page_size"])).to_list(
+        1)):
+        cursor = tangdb[0]["_id"]
+        page_list.append(tangdb[0]["_id"])
+    return page_list
+
+
+async def _build_jobs(stencil: orm.StencilDB):
+    global _jobbuild_sem
+    stencil_col = orm.get_stencil_collection()
+    jobs = []
     async with _jobbuild_sem:
-        num_rs_pages = math.ceil(
-            stencil_cfg.current_counts[stencil.rootstock_acn] /
-            config_store.cfg_dict["tangle-classes"]["arborescent"][
-                "page_size"]
-        )
-        num_sc_pages = math.ceil(
-            stencil_cfg.current_good_counts[
-                stencil.scion_acn] / config_store.cfg_dict["tangle-classes"]["arborescent"][
-                "page_size"]
-        )
-        rootstock_page_start_lis = []
-        scion_page_start_lis = []
-        for i in range(num_rs_pages):
-            tangdb = (await arbor_col.find({"ACN": stencil.rootstock_acn}).skip(
-                int(i * config_store.cfg_dict["tangle-classes"]["arborescent"]["page_size"])).limit(
-                1).to_list(None))
-            tang = from_dict(data_class=orm.ArborescentTangleDB, data=tangdb[0])
-            rootstock_page_start_lis.append(str(tang._id))
+        await stencil_col.update_one({"_id": stencil._id},
+                                     {"$set": {"state": orm.StencilStateEnum.started}})
 
-        for i in range(num_sc_pages):
-            tangdb = (await arbor_col.find({"ACN": stencil.scion_acn, "is_good": True}).skip(
-                int(i * config_store.cfg_dict["tangle-classes"]["arborescent"]["page_size"])).limit(
-                1).to_list(None))
-            tang = from_dict(data_class=orm.ArborescentTangleDB, data=tangdb[0])
-            scion_page_start_lis.append(str(tang._id))
+        async with asyncio.TaskGroup() as tg:
+            tasks = [tg.create_task(_build_cursor_list({"ACN": stencil.rootstock_acn})),
+                     tg.create_task(_build_cursor_list(
+                         {"ACN": stencil.scion_acn, "is_good": True}))]
 
-        for root_idx, scion_idx in itertools.product(rootstock_page_start_lis,
-                                                     scion_page_start_lis):
+        async def prod(l1, l2):
+            for i, j in itertools.product(l1, l2):
+                yield i, j
+
+        async for root_idx, scion_idx in prod(tasks[0].result(),
+                                              tasks[1].result(), ):
             m = hashlib.sha256()
             m.update(str(stencil._id).encode("utf-8"))
-            m.update(root_idx.encode("utf-8"))
-            m.update(scion_idx.encode("utf-8"))
+            m.update(str(root_idx).encode("utf-8"))
+            m.update(str(scion_idx).encode("utf-8"))
             m.digest()
             job_id = m.hexdigest()
-            stencil.job_backlog.append(
-                orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy([root_idx, scion_idx]))
-            )
-
-        await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
+            # stencil.job_backlog.append(
+            #     orm.StencilJobDB(job_id=job_id, cursor=copy.deepcopy([root_idx, scion_idx]))
+            # )
+            jobs.append(UpdateOne({"_id": stencil._id}, {"$push": {"job_backlog": {
+                "job_id": job_id,
+                "cursor": copy.deepcopy([root_idx, scion_idx])}}}))
+        result = await stencil_col.bulk_write(jobs, ordered=False)
+        await stencil_col.update_one({"_id": stencil._id},
+                              {"$set": {"state": orm.StencilStateEnum.no_headroom}})
+        # await stencil_col.replace_one({"_id": stencil._id}, asdict(stencil))
         ...
 
 
@@ -314,19 +326,22 @@ async def _build_nonzero_jobs(stencil_cfg: orm.StencilCfg):
     async with asyncio.TaskGroup() as tg:
         async for stencildb in stencil_col.find(
             _open_nonzero_stencil(stencil_cfg.current_completed_acn + 1)):
-            tg.create_task(_build_jobs(stencil_cfg,
-                                       from_dict(data_class=orm.StencilDB, data=stencildb)))
+            stencil = from_dict(data_class=orm.StencilDB, data=stencildb)
+            await stencil_col.update_one({"_id": stencil._id},
+                                         {"$set": {"state": orm.StencilStateEnum.started}})
+            tg.create_task(_build_jobs(stencil))
 
-    ...
+
+...
 
 
 async def _build_zero_jobs(stencil_cfg: orm.StencilCfg):
     stencil_col = orm.get_stencil_collection()
     async with asyncio.TaskGroup() as tg:
-        async for stencildb in stencil_col.find(
-            _open_zero_stencil(stencil_cfg.current_completed_acn + 1)):
-            tg.create_task(_build_jobs(stencil_cfg,
-                                       from_dict(data_class=orm.StencilDB, data=stencildb)))
+        stencils = await stencil_col.find(
+            _open_zero_stencil(stencil_cfg.current_completed_acn + 1)).to_list(None)
+        for stencildb in stencils:
+            tg.create_task(_build_jobs(from_dict(data_class=orm.StencilDB, data=stencildb)))
     ...
 
 
@@ -337,9 +352,10 @@ async def load_jobs():
     async for stencildb in stencil_col.find(
         {"job_backlog": {"$exists": True, "$not": {"$size": 0}}}):
         stencil = from_dict(data_class=orm.StencilDB, data=stencildb)
-        new_arbor_j_cnt = (await job_queue.get_job_statistics(ArborescentJob))["new"]
-        while new_arbor_j_cnt < config_store.cfg_dict["job-queue"]["min-new-count"] and len(
+        while (await job_queue.get_job_statistics(ArborescentJob))["queue_length"] < \
+            config_store.cfg_dict["job-queue"]["min-new-count"] and len(
             stencil.job_backlog) > 0:
+            loaded = True
             job = ArborescentJob(
                 cur_state=JobStateEnum.new,
                 timestamp=datetime.now(timezone.utc),
@@ -347,30 +363,16 @@ async def load_jobs():
                 grafting_lists=[[]],
                 ACN=stencil.ACN,
                 rootstock_acn=stencil.rootstock_acn,
-                scion_acn=stencil.scion_acn,
-                page=copy.deepcopy(stencil.job_backlog[0].cursor),
-            )
-            stencil.open_jobs.append(copy.deepcopy(stencil.job_backlog[0]))
-            result = await stencil_col.update_one({"_id": stencil._id},
-                                                  {"$push": {"open_jobs": {
-                                                      "job_id": stencil.job_backlog[0].job_id,
-                                                      "cursor": stencil.job_backlog[0].cursor}}})
-
-            result = await stencil_col.update_one({"_id": stencil._id},
-                                                  {"$pull": {
-                                                      "job_backlog": {"job_id": stencil.job_backlog[
-                                                          0].job_id}}})
+                scion_acn=stencil.scion_acn)
+            job.set_page(stencil.job_backlog[0].cursor)
+            result = await stencil_col.bulk_write(
+                [UpdateOne({"_id": stencil._id}, {"$push": {"open_jobs": {
+                    "job_id": stencil.job_backlog[0].job_id,
+                    "cursor": stencil.job_backlog[0].cursor}}}),
+                 UpdateOne({"_id": stencil._id}, {"$pull": {"job_backlog": {
+                     "job_id": stencil.job_backlog[0].job_id}}})])
             stencil.job_backlog.pop(0)
-
-            stencil.state = orm.StencilStateEnum.started
             await job_queue.enqueue_job(job)
-            ...
-            loaded = True
-        if len(stencil.job_backlog) == 0:
-            stencil.state = orm.StencilStateEnum.no_headroom
-        result = await stencil_col.update_one({"_id": stencil._id},
-                                              {"$set": {
-                                                  "state": stencil.state}})
 
     return loaded
 
@@ -391,34 +393,48 @@ async def startup_task():
                 grafting_lists=[[]],
                 ACN=stencil.ACN,
                 rootstock_acn=stencil.rootstock_acn,
-                scion_acn=stencil.scion_acn,
-                page=copy.deepcopy(open_job.cursor),
-            )
+                scion_acn=stencil.scion_acn)
+
+            job.set_page(copy.deepcopy(open_job.cursor))
             await job_queue.enqueue_job(job)
+
+
+async def set_stencils_complete():
+    global _stencil_cfg
+    stencil_col = orm.get_stencil_collection()
+    while True:
+        await asyncio.sleep(5)
+        async for stencildb in stencil_col.find(
+            {"job_backlog": {"$exists": True, "$size": 0},
+             "open_jobs": {"$exists": True, "$size": 0},
+             "state": orm.StencilStateEnum.no_headroom}):
+            stencil = from_dict(data_class=orm.StencilDB, data=stencildb)
+            result = await stencil_col.update_one({"_id": stencil._id},
+                                                  {"$set": {
+                                                      "state": orm.StencilStateEnum.complete}})
 
 
 async def time_job():
     """Task to run at startup to initialize Arborescent jobs."""
-    global _jobget_lock
+    global _stencil_cfg
     while True:
         await asyncio.sleep(1)
-        async with _jobget_lock:
-            stencil_col = orm.get_stencil_collection()
-            if _stencil_cfg.current_completed_acn < _stencil_cfg.max_acn:
-                if not await load_jobs():
-                    jqstats = await job_queue.get_job_statistics(ArborescentJob)
-                    if jqstats["queue_length"] == 0:
-                        complete_nonzero_stencils = await stencil_col.count_documents(
-                            _complete_nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
-                        total_nonzero_stencils = await stencil_col.count_documents(
-                            _nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
-                        complete_zero_stencils = await stencil_col.count_documents(
-                            _complete_zero_stencil(_stencil_cfg.current_completed_acn + 1))
-                        if complete_nonzero_stencils == total_nonzero_stencils:
-                            await _update_stencil_zero_config()
-                            await _build_zero_jobs(_stencil_cfg)
-                        if 1 == complete_zero_stencils:
-                            await _update_stencil_config()
-                            await _build_nonzero_jobs(_stencil_cfg)
-                        await load_jobs()
-                        await startup_task()
+        stencil_col = orm.get_stencil_collection()
+        if _stencil_cfg.current_completed_acn < _stencil_cfg.max_acn:
+            jqstats = await job_queue.get_job_statistics(ArborescentJob)
+            if not await load_jobs():
+                if jqstats["queue_length"] == 0:
+                    complete_nonzero_stencils = await stencil_col.count_documents(
+                        _complete_nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
+                    total_nonzero_stencils = await stencil_col.count_documents(
+                        _nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
+                    complete_zero_stencils = await stencil_col.count_documents(
+                        _complete_zero_stencil(_stencil_cfg.current_completed_acn + 1))
+                    if complete_nonzero_stencils == total_nonzero_stencils:
+                        await _update_stencil_zero_config()
+                        await _build_zero_jobs(_stencil_cfg)
+                    if 1 == complete_zero_stencils:
+                        await _update_stencil_config()
+                        await _build_nonzero_jobs(_stencil_cfg)
+                    await load_jobs()
+                    await startup_task()

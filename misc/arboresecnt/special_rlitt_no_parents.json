@@ -1,0 +1,362 @@
+[
+    {
+        "notation": "i[0]",
+        "ACN": 0,
+        "is_good": false,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[0 0]",
+        "ACN": -1,
+        "is_good": false,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[1]",
+        "ACN": 1,
+        "is_good": false,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-1]",
+        "ACN": 1,
+        "is_good": false,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[2]",
+        "ACN": 2,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-2]",
+        "ACN": 2,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[3]",
+        "ACN": 3,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-3]",
+        "ACN": 3,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[4]",
+        "ACN": 4,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-4]",
+        "ACN": 4,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[5]",
+        "ACN": 5,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-5]",
+        "ACN": 5,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[6]",
+        "ACN": 6,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-6]",
+        "ACN": 6,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[7]",
+        "ACN": 7,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-7]",
+        "ACN": 7,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[8]",
+        "ACN": 8,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-8]",
+        "ACN": 8,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[9]",
+        "ACN": 9,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-9]",
+        "ACN": 9,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[10]",
+        "ACN": 10,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-10]",
+        "ACN": 10,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[11]",
+        "ACN": 11,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-11]",
+        "ACN": 11,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[12]",
+        "ACN": 12,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-12]",
+        "ACN": 12,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[13]",
+        "ACN": 13,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-13]",
+        "ACN": 13,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[14]",
+        "ACN": 14,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-14]",
+        "ACN": 14,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[15]",
+        "ACN": 15,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-15]",
+        "ACN": 15,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[16]",
+        "ACN": 16,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-16]",
+        "ACN": 16,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[17]",
+        "ACN": 17,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-17]",
+        "ACN": 17,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[18]",
+        "ACN": 18,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-18]",
+        "ACN": 18,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[19]",
+        "ACN": 19,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-19]",
+        "ACN": 19,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[20]",
+        "ACN": 20,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-20]",
+        "ACN": 20,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[21]",
+        "ACN": 21,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-21]",
+        "ACN": 21,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[22]",
+        "ACN": 22,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-22]",
+        "ACN": 22,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[23]",
+        "ACN": 23,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-23]",
+        "ACN": 23,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[24]",
+        "ACN": 24,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-24]",
+        "ACN": 24,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[25]",
+        "ACN": 25,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-25]",
+        "ACN": 25,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[26]",
+        "ACN": 26,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-26]",
+        "ACN": 26,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[27]",
+        "ACN": 27,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-27]",
+        "ACN": 27,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[28]",
+        "ACN": 28,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-28]",
+        "ACN": 28,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[29]",
+        "ACN": 29,
+        "is_good": true,
+        "positivity": "neutral"
+    },
+    {
+        "notation": "i[-29]",
+        "ACN": 29,
+        "is_good": true,
+        "positivity": "neutral"
+    }
+]

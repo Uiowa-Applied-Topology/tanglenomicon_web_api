@@ -74,21 +74,11 @@ async def _get_next_arborescent_job(
     HTTPException
         If no job found raise 404.
     """
-    job = await job_queue.get_next_job(aj.ArborescentJob, current_user)
+    job: aj.ArborescentJob = await job_queue.get_next_job(aj.ArborescentJob, current_user)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")
     else:
-        rp, rn, ru = await aj.get_rootstocklist(job.rootstock_acn, job.page[0])
-        sp, sn, su = await aj.get_scionlist(job.scion_acn, job.page[1])
-        job.grafting_lists = [
-            [rp, ["positive"] * len(rp), sp, ["positive"] * len(sp)],
-            [rp, ["positive"] * len(rp), su, ["neutral"] * len(su)],
-            [ru, ["neutral"] * len(ru), sp, ["positive"] * len(sp)],
-            [rn, ["negative"] * len(rn), sn, ["negative"] * len(sn)],
-            [rn, ["negative"] * len(rn), su, ["neutral"] * len(su)],
-            [ru, ["neutral"] * len(ru), sn, ["negative"] * len(sn)],
-            [ru, ["neutral"] * len(ru), su, ["neutral"] * len(su)],
-        ]
+        await job.get_lists()
         return job
     return None
 

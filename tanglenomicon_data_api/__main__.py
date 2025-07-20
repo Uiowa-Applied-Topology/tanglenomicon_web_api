@@ -29,6 +29,7 @@ job_defs = [
     mont_j.startup_task,
     arbor_j.startup_task,
     arbor_j.time_job,
+    arbor_j.set_stencils_complete,
     job_queue.task_clean_complete_jobs,
     job_queue.task_clean_stale_jobs,
 ]
