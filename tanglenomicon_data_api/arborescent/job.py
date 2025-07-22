@@ -231,20 +231,29 @@ class ArborescentJob(GenerationJob):
                 for tang in self._results.arbor_list:
                     yield tang
 
-            tangles_2_store = [
-                UpdateOne(
-                    {"notation": str(tang.notation)},
-                    {
-                        "$set": {
-                            "positivity": tang.positivity,
-                            "is_good": tang.is_good,
-                            "ACN": tang.ACN,
-                        }
-                    },
-                    upsert=True,
-                )
-                async for tang in aiter_results()
-            ]
+            tangles_2_store = []
+            async for tang in aiter_results():
+                tangles_2_store.append(
+                    UpdateOne(
+                        {"notation": str(tang.notation)},
+                        {
+                            "$set": {
+                                "positivity": tang.positivity,
+                                "is_good": tang.is_good,
+                                "ACN": tang.ACN,
+                            }
+                        },
+                        upsert=True,
+                    ))
+                try:
+                    if len(tangles_2_store) > 1000:
+                        ret_val = True
+                        await arborescent_col.bulk_write(tangles_2_store, ordered=False)
+                        tangles_2_store = []
+                except Exception as e:
+                    logger.error(f"Exception while storing arborescent tangles: {e}")
+                    ret_val = False
+                    pass
             # tangles_2_store.extend([
             #     UpdateOne(
             #         {"notation": str(tang.notation)},
@@ -254,15 +263,15 @@ class ArborescentJob(GenerationJob):
             #     async for tang in aiter_results() for rs_set in tang.parents
             # ])
 
-            ret_val = True
-            if len(tangles_2_store) > 0:
-                try:
+            try:
+                if len(tangles_2_store) > 0:
+                    ret_val = True
                     await arborescent_col.bulk_write(tangles_2_store, ordered=False)
-                except Exception as e:
-                    logger.error(f"Exception while storing arborescent tangles: {e}")
-                    ret_val = False
-                    pass
-            await job_col.delete_one({"_id": self._jobdb._id})
+                await job_col.delete_one({"_id": self._jobdb._id})
+            except Exception as e:
+                logger.error(f"Exception while storing arborescent tangles: {e}")
+                ret_val = False
+                pass
             # await self._update_stencil()
         return ret_val
 

@@ -43,7 +43,8 @@ def init_client(url: str, port: int, username: str, password: str, database_name
         username = urllib.parse.quote_plus(username)
         password = urllib.parse.quote_plus(password)
         client = AsyncMongoClient(
-            f"mongodb://{username}:{password}@{url}:{port}/?authSource=admin&retryWrites=true&w=majority"
+            f"mongodb://{username}:{password}@{url}:{port}/?authSource=admin&retryWrites=true&w=majority",
+            connectTimeoutMS=0,
             # noqa: E501
         )
         db = client[database_name]
