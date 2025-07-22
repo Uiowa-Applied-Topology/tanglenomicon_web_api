@@ -27,6 +27,21 @@ def get_stencil_collection() -> AsyncCollection:
     # return _sten_col
 
 
+def get_job_collection() -> AsyncCollection:
+    """Return the mongodb collection containing the Arborescent stencils.
+
+    Returns
+    -------
+    AsyncCollection
+        The Arborescent stencils collection.
+    """
+    return dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["job_col_name"]]
+    # global _sten_col
+    # if _sten_col is None:
+    #     _sten_col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+    # return _sten_col
+
+
 def get_arborescent_collection() -> AsyncCollection:
     """Return the mongodb collection containing the Arborescent tangles.
 
@@ -58,12 +73,22 @@ class StencilStateEnum(int, Enum):
     complete = 3
 
 
+class JobDBStateEnum(int, Enum):
+    """Enum describing the states of a stencil."""
+
+    new = 0
+    started = 1
+
+
 @dataclass
-class StencilJobDB:
+class JobDB:
     """A subjob for a stencil to be read/written to/from a collection."""
 
-    job_id: str
+    _id: ObjectId
+    state: int
     cursor: List[ObjectId]
+    rootstock_acn: int
+    scion_acn: int
 
 
 @dataclass
@@ -83,8 +108,7 @@ class StencilDB:
     rootstock_acn: int
     scion_acn: int
     state: int
-    job_backlog: List[StencilJobDB]
-    open_jobs: List[StencilJobDB]
+    cursor: List[ObjectId]
 
 
 @dataclass
@@ -92,17 +116,18 @@ class ArborescentTangleDB:
     """A montesinos tangle to be read from the tangle collection."""
 
     _id: ObjectId
-    notation:str
+    notation: str
     positivity: str
     # parents: List[List[str]]
     is_good: bool
     ACN: int
 
+
 @dataclass
 class ArborescentTangle:
     """A montesinos tangle to be read from the tangle collection."""
 
-    notation:str
+    notation: str
     positivity: str
     is_good: bool
     ACN: int
