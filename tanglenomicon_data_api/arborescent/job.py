@@ -17,7 +17,7 @@ import itertools
 
 logger = logging.getLogger("uvicorn")
 
-_jobbuild_sem: asyncio.Semaphore = asyncio.Semaphore(10)
+_jobbuild_sem: asyncio.Semaphore = asyncio.Semaphore(3)
 _store_sem: asyncio.Semaphore = asyncio.Semaphore(10)
 _stencil_cfg: orm.StencilCfg = None
 _debounce: datetime = None
@@ -311,7 +311,6 @@ async def load_jobs():
             await job_queue.enqueue_job(jobint)
             await job_col.update_one({"_id": job._id},
                                      {"$set": {"state": orm.JobDBStateEnum.started}})
-
     return loaded
 
 
@@ -437,24 +436,24 @@ async def set_stencils_complete():
 async def time_job():
     """Task to run at startup to initialize Arborescent jobs."""
     global _stencil_cfg
-    while True:
-        await asyncio.sleep(1)
-        stencil_col = orm.get_stencil_collection()
-        if _stencil_cfg.current_completed_acn < _stencil_cfg.max_acn:
-            if not await load_jobs():
-                jqstats = await job_queue.get_job_statistics(ArborescentJob)
-                if jqstats["queue_length"] == 0:
-                    complete_nonzero_stencils = await stencil_col.count_documents(
-                        _complete_nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
-                    total_nonzero_stencils = await stencil_col.count_documents(
-                        _nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
-                    complete_zero_stencils = await stencil_col.count_documents(
-                        _complete_zero_stencil(_stencil_cfg.current_completed_acn + 1))
-                    if complete_nonzero_stencils == total_nonzero_stencils:
-                        await _update_stencil_zero_config()
-                        await _build_zero_jobs(_stencil_cfg)
-                    if 1 == complete_zero_stencils:
-                        await _update_stencil_config()
-                        await _build_nonzero_jobs(_stencil_cfg)
-                    await load_jobs()
-                    await startup_task()
+    await asyncio.sleep(2)
+    stencil_col = orm.get_stencil_collection()
+    while _stencil_cfg.current_completed_acn < _stencil_cfg.max_acn:
+        if not await load_jobs():
+            jqstats = await job_queue.get_job_statistics(ArborescentJob)
+            if jqstats["queue_length"] == 0:
+                complete_nonzero_stencils = await stencil_col.count_documents(
+                    _complete_nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
+                total_nonzero_stencils = await stencil_col.count_documents(
+                    _nonzero_stencil(_stencil_cfg.current_completed_acn + 1))
+                complete_zero_stencils = await stencil_col.count_documents(
+                    _complete_zero_stencil(_stencil_cfg.current_completed_acn + 1))
+                if complete_nonzero_stencils == total_nonzero_stencils:
+                    await _update_stencil_zero_config()
+                    await _build_zero_jobs(_stencil_cfg)
+                if 1 == complete_zero_stencils:
+                    await _update_stencil_config()
+                    await _build_nonzero_jobs(_stencil_cfg)
+                await load_jobs()
+                await startup_task()
+        await asyncio.sleep(2)

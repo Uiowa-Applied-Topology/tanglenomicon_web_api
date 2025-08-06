@@ -68,6 +68,8 @@ flowchart LR
         direction LR
         G1([Get Montesinos job])
         G2([Report Montesinos job])
+        G3([Get Arborescent job])
+        G4([Report Arborescent job])
     end
     subgraph Presentation
         direction LR
@@ -97,6 +99,8 @@ flowchart LR
     time["Time fa:fa-user"]
     client --> G1
     client --> G2
+    client --> G3
+    client --> G4
     time --> JH2
     time --> JH3
     time --> JH7
@@ -108,6 +112,8 @@ flowchart LR
     JH3 -. include .-> DH2
     G1 -. include .-> JH6
     G2 -. include .-> JH4
+    G3 -. include .-> JH6
+    G4 -. include .-> JH4
     client --> PL1 -. include .-> DH3
     client --> PL2 -. include .-> DH3
     client --> PL3 -. include .-> DH3
