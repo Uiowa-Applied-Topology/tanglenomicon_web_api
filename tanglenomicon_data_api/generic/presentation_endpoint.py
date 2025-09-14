@@ -81,7 +81,7 @@ async def _retrieve_generic_tangle(id: str):
 
 @router.get("/tangles", response_model=List[orm.GenericTangDB])
 async def retrieve_generic_tangles(
-    tangle_list: Annotated[List[orm.GenericTangDB], Depends(_retrieve_generic_tangles)]
+    tangle_list: Annotated[List[orm.GenericTangDB], Depends(_retrieve_generic_tangles)],
 ):
     """Return the next generic job.
 
@@ -100,7 +100,7 @@ async def retrieve_generic_tangles(
 
 @router.get("/tangle")
 async def retrieve_generic_tangle(
-    tangle: Annotated[orm.GenericTangDB, Depends(_retrieve_generic_tangle)]
+    tangle: Annotated[orm.GenericTangDB, Depends(_retrieve_generic_tangle)],
 ):
     """Return the next generic job.
 
@@ -119,7 +119,7 @@ async def retrieve_generic_tangle(
 
 @router.get("/queue_stats")
 async def retrieve_job_statistics(
-    stats: Annotated[dict, Depends(job_queue.get_job_statistics)]
+    stats: Annotated[dict, Depends(job_queue.get_job_statistics)],
 ) -> dict:
     """Request for queue statistics.
 

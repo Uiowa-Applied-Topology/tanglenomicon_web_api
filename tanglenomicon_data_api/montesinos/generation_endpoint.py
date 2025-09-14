@@ -52,7 +52,7 @@ async def _report_job_results(
 
 
 async def _get_next_montesinos_job(
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> mj.MontesinosJob:
     """Return the next montesinos job from the job queue.
 
@@ -103,7 +103,7 @@ async def report_montesinos_job(
 
 @router.get("/job", response_model=mj.MontesinosJob)
 async def retrieve_montesinos_job(
-    next_job: Annotated[mj.MontesinosJob, Depends(_get_next_montesinos_job)]
+    next_job: Annotated[mj.MontesinosJob, Depends(_get_next_montesinos_job)],
 ):
     """Return the next montesinos job.
 

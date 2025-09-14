@@ -286,7 +286,7 @@ async def get_current_user(
 
 
 async def _get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
     """Return data for current active user.
 
@@ -338,7 +338,7 @@ async def add_user(username: str, password: str, token_expire: int = None):
 
 @router.get("/users/me/", response_model=User)
 async def read_users_me(
-    current_user: Annotated[User, Depends(_get_current_active_user)]
+    current_user: Annotated[User, Depends(_get_current_active_user)],
 ):
     """Endpoint to return the current active user.
 

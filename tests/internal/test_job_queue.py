@@ -172,7 +172,6 @@ async def test_get_job_statistics_nonexistent(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_clean_stale_jobs_positive(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     for i in range(5):
         job_id = f"pending {i}"
@@ -210,7 +209,6 @@ async def test_clean_stale_jobs_positive(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_clean_stale_jobs_empty(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     for i in range(3):
         job_id = f"new {i}"
@@ -249,7 +247,6 @@ async def test_clean_stale_jobs_empty(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_task_clean_complete_jobs_positive(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     for i in range(5):
         job_id = f"pending {i}"
@@ -290,7 +287,6 @@ async def test_task_clean_complete_jobs_positive(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_task_clean_complete_jobs_empty(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     for i in range(5):
@@ -330,7 +326,6 @@ async def test_task_clean_complete_jobs_empty(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_enqueue_job_positive(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     job = GenerationJob(
@@ -347,7 +342,6 @@ async def test_enqueue_job_positive(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_enqueue_job_in_queue(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     job = GenerationJob(
@@ -371,7 +365,6 @@ async def test_enqueue_job_in_queue(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_mark_job_complete_job_in_queue(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     user = User(username=client_id)
@@ -391,7 +384,6 @@ async def test_mark_job_complete_job_in_queue(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_mark_job_complete_job_not_in_queue(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     user = User(username=client_id)
@@ -407,7 +399,6 @@ async def test_mark_job_complete_job_not_in_queue(get_test_cfg, setup_job_queue)
 
 @pytest.mark.anyio
 async def test_mark_job_complete_job_not_in_pending(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     user = User(username=client_id)
@@ -425,7 +416,6 @@ async def test_mark_job_complete_job_not_in_pending(get_test_cfg, setup_job_queu
 
 @pytest.mark.anyio
 async def test_mark_job_complete_job_mismatch_client(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     user = User(username="not the client")
@@ -450,7 +440,6 @@ async def test_mark_job_complete_job_mismatch_client(get_test_cfg, setup_job_que
 
 @pytest.mark.anyio
 async def test_get_next_job_with_jobs_in_queue(get_test_cfg, setup_job_queue):
-
     job_id = f"new"
     client_id = "client"
     user = User(username=client_id)
@@ -471,7 +460,6 @@ async def test_get_next_job_with_jobs_in_queue(get_test_cfg, setup_job_queue):
 
 @pytest.mark.anyio
 async def test_get_next_job_empty_queue(get_test_cfg, setup_job_queue):
-
     client_id = "client"
     user = User(username=client_id)
     res = await jq.get_next_job(MockClass, user)

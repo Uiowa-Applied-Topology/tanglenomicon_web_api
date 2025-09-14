@@ -16,35 +16,35 @@
         "current_completed_acn": 1,
         "max_acn": 26
     },
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 2, "ACN": 2    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 3, "ACN": 3    ,"cursor":[]},
+
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 2, "ACN": 3    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 4, "ACN": 4    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 3, "ACN": 4    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 2, "ACN": 4    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 5, "ACN": 5    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 4, "ACN": 5    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 3, "ACN": 5    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 2, "ACN": 5    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 6, "ACN": 6    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 5, "ACN": 6    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 4, "ACN": 6    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 3, "ACN": 6    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 4, "scion_acn": 2, "ACN": 6    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 7, "ACN": 7    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 6, "ACN": 7    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 5, "ACN": 7    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 4, "ACN": 7    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 4, "scion_acn": 3, "ACN": 7    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 5, "scion_acn": 2, "ACN": 7    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 8, "ACN": 8    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 7, "ACN": 8    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 6, "ACN": 8    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 5, "ACN": 8    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 4, "scion_acn": 4, "ACN": 8    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 5, "scion_acn": 3, "ACN": 8    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 6, "scion_acn": 2, "ACN": 8    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 9, "ACN": 9    ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 8, "ACN": 9    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 7, "ACN": 9    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 6, "ACN": 9    ,"cursor":[]},
@@ -52,7 +52,7 @@
     { "state": 0,  "rootstock_acn": 5, "scion_acn": 4, "ACN": 9    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 6, "scion_acn": 3, "ACN": 9    ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 7, "scion_acn": 2, "ACN": 9    ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 10, "ACN": 10  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 9, "ACN": 10   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 8, "ACN": 10   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 7, "ACN": 10   ,"cursor":[]},
@@ -61,7 +61,7 @@
     { "state": 0,  "rootstock_acn": 6, "scion_acn": 4, "ACN": 10   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 7, "scion_acn": 3, "ACN": 10   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 8, "scion_acn": 2, "ACN": 10   ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 11, "ACN": 11  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 10, "ACN": 11  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 9, "ACN": 11   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 8, "ACN": 11   ,"cursor":[]},
@@ -71,7 +71,7 @@
     { "state": 0,  "rootstock_acn": 7, "scion_acn": 4, "ACN": 11   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 8, "scion_acn": 3, "ACN": 11   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 9, "scion_acn": 2, "ACN": 11   ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 12, "ACN": 12  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 11, "ACN": 12  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 10, "ACN": 12  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 9, "ACN": 12   ,"cursor":[]},
@@ -82,7 +82,7 @@
     { "state": 0,  "rootstock_acn": 8, "scion_acn": 4, "ACN": 12   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 9, "scion_acn": 3, "ACN": 12   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 10, "scion_acn": 2, "ACN": 12  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 13, "ACN": 13  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 12, "ACN": 13  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 11, "ACN": 13  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 10, "ACN": 13  ,"cursor":[]},
@@ -94,7 +94,7 @@
     { "state": 0,  "rootstock_acn": 9, "scion_acn": 4, "ACN": 13   ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 10, "scion_acn": 3, "ACN": 13  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 11, "scion_acn": 2, "ACN": 13  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 14, "ACN": 14  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 13, "ACN": 14  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 12, "ACN": 14  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 11, "ACN": 14  ,"cursor":[]},
@@ -107,7 +107,7 @@
     { "state": 0,  "rootstock_acn": 10, "scion_acn": 4, "ACN": 14  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 11, "scion_acn": 3, "ACN": 14  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 12, "scion_acn": 2, "ACN": 14  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 15, "ACN": 15  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 14, "ACN": 15  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 13, "ACN": 15  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 12, "ACN": 15  ,"cursor":[]},
@@ -121,7 +121,7 @@
     { "state": 0,  "rootstock_acn": 11, "scion_acn": 4, "ACN": 15  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 12, "scion_acn": 3, "ACN": 15  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 13, "scion_acn": 2, "ACN": 15  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 16, "ACN": 16  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 15, "ACN": 16  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 14, "ACN": 16  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 13, "ACN": 16  ,"cursor":[]},
@@ -136,7 +136,7 @@
     { "state": 0,  "rootstock_acn": 12, "scion_acn": 4, "ACN": 16  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 13, "scion_acn": 3, "ACN": 16  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 14, "scion_acn": 2, "ACN": 16  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 17, "ACN": 17  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 16, "ACN": 17  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 15, "ACN": 17  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 14, "ACN": 17  ,"cursor":[]},
@@ -152,7 +152,7 @@
     { "state": 0,  "rootstock_acn": 13, "scion_acn": 4, "ACN": 17  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 14, "scion_acn": 3, "ACN": 17  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 15, "scion_acn": 2, "ACN": 17  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 18, "ACN": 18  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 17, "ACN": 18  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 16, "ACN": 18  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 15, "ACN": 18  ,"cursor":[]},
@@ -169,7 +169,7 @@
     { "state": 0,  "rootstock_acn": 14, "scion_acn": 4, "ACN": 18  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 15, "scion_acn": 3, "ACN": 18  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 16, "scion_acn": 2, "ACN": 18  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 19, "ACN": 19  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 18, "ACN": 19  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 17, "ACN": 19  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 16, "ACN": 19  ,"cursor":[]},
@@ -187,7 +187,7 @@
     { "state": 0,  "rootstock_acn": 15, "scion_acn": 4, "ACN": 19  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 16, "scion_acn": 3, "ACN": 19  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 17, "scion_acn": 2, "ACN": 19  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 20, "ACN": 20  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 19, "ACN": 20  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 18, "ACN": 20  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 17, "ACN": 20  ,"cursor":[]},
@@ -206,7 +206,7 @@
     { "state": 0,  "rootstock_acn": 16, "scion_acn": 4, "ACN": 20  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 17, "scion_acn": 3, "ACN": 20  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 18, "scion_acn": 2, "ACN": 20  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 21, "ACN": 21  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 20, "ACN": 21  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 19, "ACN": 21  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 18, "ACN": 21  ,"cursor":[]},
@@ -226,7 +226,7 @@
     { "state": 0,  "rootstock_acn": 17, "scion_acn": 4, "ACN": 21  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 18, "scion_acn": 3, "ACN": 21  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 19, "scion_acn": 2, "ACN": 21  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 22, "ACN": 22  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 21, "ACN": 22  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 20, "ACN": 22  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 19, "ACN": 22  ,"cursor":[]},
@@ -247,7 +247,7 @@
     { "state": 0,  "rootstock_acn": 18, "scion_acn": 4, "ACN": 22  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 19, "scion_acn": 3, "ACN": 22  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 20, "scion_acn": 2, "ACN": 22  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 23, "ACN": 23  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 22, "ACN": 23  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 21, "ACN": 23  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 20, "ACN": 23  ,"cursor":[]},
@@ -269,7 +269,7 @@
     { "state": 0,  "rootstock_acn": 19, "scion_acn": 4, "ACN": 23  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 20, "scion_acn": 3, "ACN": 23  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 21, "scion_acn": 2, "ACN": 23  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 24, "ACN": 24  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 23, "ACN": 24  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 22, "ACN": 24  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 21, "ACN": 24  ,"cursor":[]},
@@ -292,7 +292,7 @@
     { "state": 0,  "rootstock_acn": 20, "scion_acn": 4, "ACN": 24  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 21, "scion_acn": 3, "ACN": 24  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 22, "scion_acn": 2, "ACN": 24  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 25, "ACN": 25  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 24, "ACN": 25  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 23, "ACN": 25  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 22, "ACN": 25  ,"cursor":[]},
@@ -316,7 +316,7 @@
     { "state": 0,  "rootstock_acn": 21, "scion_acn": 4, "ACN": 25  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 22, "scion_acn": 3, "ACN": 25  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 23, "scion_acn": 2, "ACN": 25  ,"cursor":[]},
-    { "state": 0,  "rootstock_acn": 0, "scion_acn": 26, "ACN": 26  ,"cursor":[]},
+
     { "state": 0,  "rootstock_acn": 1, "scion_acn": 25, "ACN": 26  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 2, "scion_acn": 24, "ACN": 26  ,"cursor":[]},
     { "state": 0,  "rootstock_acn": 3, "scion_acn": 23, "ACN": 26  ,"cursor":[]},

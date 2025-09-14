@@ -63,7 +63,7 @@ async def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
                 i
                 async for i in aiter(aiterjq())
                 if isinstance(_job_queue[i], job_type)
-                   and _job_queue[i].cur_state == JobStateEnum.new
+                and _job_queue[i].cur_state == JobStateEnum.new
             ]
         )
 
@@ -89,7 +89,7 @@ async def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> 
                 i
                 async for i in aiter(aiterjq())
                 if isinstance(_job_queue[i], job_type)
-                   and _job_queue[i].cur_state == JobStateEnum.complete
+                and _job_queue[i].cur_state == JobStateEnum.complete
             ]
         )
 
@@ -114,7 +114,7 @@ async def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> i
                 i
                 async for i in aiter(aiterjq())
                 if isinstance(_job_queue[i], job_type)
-                   and _job_queue[i].cur_state == JobStateEnum.pending
+                and _job_queue[i].cur_state == JobStateEnum.pending
             ]
         )
 
@@ -150,13 +150,23 @@ async def _clean_stale_jobs():
         async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
-                async for i in aiter(aiterjq())
+                async for i in aiterjq()
                 if (_is_above_time_delta(_job_queue[i].timestamp))
-                   and (_job_queue[i].cur_state != JobStateEnum.complete)
-                   and (_job_queue[i].cur_state != JobStateEnum.new)
+                and (_job_queue[i].cur_state != JobStateEnum.complete)
+                and (_job_queue[i].cur_state != JobStateEnum.new)
             ]
             for item in items:
                 item.cur_state = JobStateEnum.new
+
+
+async def _store_and_remove(item: GenerationJob):
+    global _job_queue
+    try:
+        if await item.store():
+            del _job_queue[item.job_id]
+    except Exception as e:
+        logger.error(f"Exception while processing job {item.job_id}: {e}")
+        pass
 
 
 async def _clean_complete_jobs():
@@ -168,22 +178,14 @@ async def _clean_complete_jobs():
         async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
-                async for i in aiter(aiterjq())
+                async for i in aiterjq()
                 if _job_queue[i].cur_state == JobStateEnum.complete
             ]
-        logger.info(f"Storing {len(items)} jobs.")
+            logger.debug(f"Storing {len(items)} jobs.")
 
-        async with asyncio.TaskGroup() as tg:
-            for item in items:
-                tg.create_task(item.store())
-
-        for item in items:
-            try:
-                async with jq_lock:
-                    del _job_queue[item.job_id]
-            except Exception as e:
-                logger.error(f"Exception while processing job {item.job_id}: {e}")
-                pass
+            async with asyncio.TaskGroup() as tg:
+                for item in items:
+                    tg.create_task(_store_and_remove(item))
 
 
 async def mark_job_complete(results: GenerationJobResults, current_user: User) -> bool:
@@ -246,7 +248,7 @@ async def get_next_job(
             i
             async for i in aiter(aiterjq())
             if isinstance(_job_queue[i], job_type)
-               and _job_queue[i].cur_state == JobStateEnum.new
+            and _job_queue[i].cur_state == JobStateEnum.new
         ]
         if len(items) > 0:
             _job_queue[items[0]].cur_state = JobStateEnum.pending

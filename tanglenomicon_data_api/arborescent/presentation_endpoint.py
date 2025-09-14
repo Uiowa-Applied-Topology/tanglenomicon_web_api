@@ -82,7 +82,7 @@ async def _retrieve_arborescent_tangles(
 async def retrieve_arborescent_tangles(
     tangle_list: Annotated[
         List[orm.ArborescentTangle], Depends(_retrieve_arborescent_tangles)
-    ]
+    ],
 ):
     """Return the next arborescent job.
 

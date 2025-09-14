@@ -18,6 +18,7 @@ from typing_extensions import Annotated
 from getpass import getpass, getuser
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+
 logging.basicConfig()
 # logging.getLogger().setLevel(logging.DEBUG)
 

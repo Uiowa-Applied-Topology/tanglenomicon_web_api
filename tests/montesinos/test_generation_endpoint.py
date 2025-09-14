@@ -90,7 +90,6 @@ async def test_retrieve_montesinos_job_jq_empty(
     valid_montesinos_stencil_col_all_new,
     get_test_jwt,
 ):
-
     headers = {"Authorization": f"Bearer {get_test_jwt}"}
     transport = ASGITransport(app=api)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:

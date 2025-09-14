@@ -79,7 +79,7 @@ async def _retrieve_rational_tangles(
 async def retrieve_rational_tangles(
     tangle_list: Annotated[
         List[orm.RationalTangDB], Depends(_retrieve_rational_tangles)
-    ]
+    ],
 ):
     """Return the next rational job.
 

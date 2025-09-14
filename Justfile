@@ -45,6 +45,13 @@ charm:
     sh pycharm ./
 
 
+check-ruff:
+    ruff check
+    ruff format --check
+
+do-ruff:
+    ruff format
+
 decrypt-sops:
     sops decrypt .sops/mongo.enc.yaml > .sops/mongo.yaml
     sops decrypt .sops/mongo_dev.enc.yaml > .sops/mongo_dev.yaml

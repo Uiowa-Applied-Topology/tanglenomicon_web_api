@@ -55,7 +55,7 @@ async def _report_job_results(
 
 
 async def _get_next_arborescent_job(
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> aj.ArborescentJob:
     """Return the next arborescent job from the job queue.
 
@@ -74,7 +74,9 @@ async def _get_next_arborescent_job(
     HTTPException
         If no job found raise 404.
     """
-    job: aj.ArborescentJob = await job_queue.get_next_job(aj.ArborescentJob, current_user)
+    job: aj.ArborescentJob = await job_queue.get_next_job(
+        aj.ArborescentJob, current_user
+    )
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")
     else:
@@ -104,7 +106,7 @@ async def report_arborescent_job(
 
 @router.get("/job", response_model=aj.ArborescentJob)
 async def retrieve_arborescent_job(
-    next_job: Annotated[aj.ArborescentJob, Depends(_get_next_arborescent_job)]
+    next_job: Annotated[aj.ArborescentJob, Depends(_get_next_arborescent_job)],
 ):
     """Return the next arborescent job.
 

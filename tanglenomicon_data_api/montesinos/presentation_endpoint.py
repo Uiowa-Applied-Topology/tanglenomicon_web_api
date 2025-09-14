@@ -82,7 +82,7 @@ async def _retrieve_montesinos_tangles(
 async def retrieve_montesinos_tangles(
     tangle_list: Annotated[
         List[orm.MontesinosTangleDB], Depends(_retrieve_montesinos_tangles)
-    ]
+    ],
 ):
     """Return the next montesinos job.
 

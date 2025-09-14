@@ -103,6 +103,7 @@ class StencilCfg:
 @dataclass
 class StencilDB:
     """A stencil to be read/written to/from a collection."""
+
     _id: ObjectId
     ACN: int
     rootstock_acn: int

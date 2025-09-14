@@ -30,7 +30,7 @@ extensions = [
     "myst_parser",
     "sphinxcontrib.mermaid",
     "autodoc2",
-    "sphinx_rtd_dark_mode"
+    "sphinx_rtd_dark_mode",
 ]
 
 templates_path = ["_templates"]
@@ -38,7 +38,7 @@ exclude_patterns = []
 source_suffix = {".rst": "restructuredtext"}
 
 
-suppress_warnings = ["myst.strikethrough","misc.highlighting_failure"]
+suppress_warnings = ["myst.strikethrough", "misc.highlighting_failure"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.7", None),
