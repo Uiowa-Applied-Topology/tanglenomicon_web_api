@@ -5,6 +5,9 @@ PYTHONPATH := "."
 python_dir := if os_family() == "windows" { "./.venv/Scripts" } else { "./.venv/bin" }
 python_exe := python_dir + if os_family() == "windows" { "/python.exe" } else { "/python" }
 
+@_default:
+    just --list
+
 # Set up development environment
 bootstrap:
     if test ! -e build/flake; then mkdir -p build/flake; fi
