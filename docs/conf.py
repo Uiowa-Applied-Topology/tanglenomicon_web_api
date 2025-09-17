@@ -30,7 +30,10 @@ extensions = [
     "myst_parser",
     "sphinxcontrib.mermaid",
     "autodoc2",
-    "sphinx_rtd_dark_mode",
+    # "sphinx_rtd_dark_mode",
+    "sphinx_material",
+    "custom_admonitions",
+    "sphinxcontrib.inkscapeconverter",
 ]
 
 templates_path = ["_templates"]
@@ -124,9 +127,32 @@ myst_substitutions = {
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 # user starts in dark mode
 default_dark_mode = True
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_material"
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "dracula"
+
+# Material theme options (see theme.conf for more information)
+html_theme_options = {
+    # Set the name of the project to appear in the navigation.
+    "nav_title": "The Tanglenomicon: Core Libraries",
+    # Set the color and the accent color
+    "theme_color": "001f3f",
+    "color_primary": "#001f3f",
+    "color_accent": "#7FDBFF",
+    # Set the repo location to get a badge with stats
+    "repo_url": "https://github.com/Uiowa-Applied-Topology/tanglenomicon_core_libraries",
+    "repo_name": "tanglenomicon_core_libraries",
+    "html_minify": True,
+    "css_minify": True,
+    "logo_icon": "",
+}
+html_sidebars = {
+    "**": [
+        "globaltoc.html",
+        "localtoc.html",
+    ]
+}
+html_show_sourcelink = False
 # html_static_path = ["_static"]
 
 mermaid_d3_zoom = True

@@ -366,16 +366,16 @@ I can't think of any at the moment.
 
 #### Positive Test
 
-Results are stored to database and stencil is updated
+Results are stored to database and job is removed from collection.
 
 ##### Inputs:
 
-- Mocked valid stencil collection with min-new-count - 1 open jobs
 - Mocked valid arborescent collection
+- Mocked job collection.
 
 ##### Expected Output:
 
-Enqueue jobs with the correct id
+Tangles written to stencil store and job removed from collection.
 
 #### Negative Tests
 
