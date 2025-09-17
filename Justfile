@@ -35,6 +35,12 @@ cloc:
     mkdir -p docs/summary
     {{ python_exe }} {{ python_dir}}/pygount --format=summary  --suffix=md,py,yaml
 
+check-prettier:
+    prettier "docs/**/*.md" --check
+
+do-prettier:
+    prettier -w "docs/**/*.md"
+
 pytest:
     {{ python_exe }} -m pytest
 

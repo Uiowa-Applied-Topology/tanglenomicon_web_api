@@ -6,7 +6,6 @@ This is the base module for the api. It contains the definition for apscheduler 
 
 ## Diagrams
 
-
 ```mermaid
 
 classDiagram

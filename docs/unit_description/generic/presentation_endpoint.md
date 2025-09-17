@@ -35,7 +35,7 @@ mge ..|> age
 ```mermaid
 stateDiagram-v2
     state "Get tangle from db" as vj
-    [*] --> vj 
+    [*] --> vj
     vj  -->  [*]
 
 ```
@@ -47,7 +47,7 @@ Retrieves a page of tangles.
 ```mermaid
 stateDiagram-v2
     state "Get tangles from db" as vj
-    [*] --> vj 
+    [*] --> vj
     vj  -->  [*]
 
 ```
@@ -120,4 +120,4 @@ Empty tangle.
 
 ###### Expected Output:
 
-Not found error is returned. 
+Not found error is returned.

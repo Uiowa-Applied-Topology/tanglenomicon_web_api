@@ -10,7 +10,7 @@ Sets state for a job to pending
 
 ## Preconditions:
 
-* Server is initialized
+- Server is initialized
 
 ## Trigger:
 
@@ -18,4 +18,4 @@ An upstream actor requests a job be marked as `pending`
 
 ## Scenario:
 
-1) Set job to `pending`
+1. Set job to `pending`

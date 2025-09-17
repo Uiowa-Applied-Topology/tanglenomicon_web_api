@@ -152,7 +152,7 @@ Job queue stats are correctly reported.
 
 ##### Inputs:
 
--   Mocked job_queue with variable job counts in each state.
+- Mocked job_queue with variable job counts in each state.
 
 ##### Expected Output:
 
@@ -174,7 +174,7 @@ Job queue stats are correctly reported.
 
 ###### Inputs:
 
--   Mocked job_queue with variable job counts in each state.
+- Mocked job_queue with variable job counts in each state.
 
 ###### Expected Output:
 
@@ -186,7 +186,7 @@ Tests behaviour when job queue stats are requested for a specific class type.
 
 ###### Inputs:
 
--   Mocked job_queue with variable job counts in each state and multiple types.
+- Mocked job_queue with variable job counts in each state and multiple types.
 
 ###### Expected Output:
 
@@ -200,7 +200,7 @@ Tests behaviour when requesting type not in queue.
 
 ###### Inputs:
 
--   Mocked job_queue with variable job counts in each state.
+- Mocked job_queue with variable job counts in each state.
 
 ###### Expected Output:
 
@@ -218,7 +218,7 @@ Tests normal program flow.
 
 ###### Inputs:
 
--   job queue has stale jobs.
+- job queue has stale jobs.
 
 ###### Expected Output:
 
@@ -230,7 +230,7 @@ Tests normal program flow.
 
 ###### Inputs:
 
--   job queue has no stale jobs.
+- job queue has no stale jobs.
 
 ###### Expected Output:
 
@@ -244,7 +244,7 @@ Tests behaviour when job queue is empty.
 
 ###### Inputs:
 
--   job queue has no jobs.
+- job queue has no jobs.
 
 ###### Expected Output:
 
@@ -260,7 +260,7 @@ Tests normal program flow.
 
 ###### Inputs:
 
--   job queue has complete jobs.
+- job queue has complete jobs.
 
 ###### Expected Output:
 
@@ -272,7 +272,7 @@ Tests normal program flow.
 
 ###### Inputs:
 
--   job queue has no complete jobs.
+- job queue has no complete jobs.
 
 ###### Expected Output:
 
@@ -286,7 +286,7 @@ Tests behaviour when job queue is empty.
 
 ###### Inputs:
 
--   job queue has no jobs.
+- job queue has no jobs.
 
 ###### Expected Output:
 
@@ -304,7 +304,7 @@ Tests the normal program flow.
 
 ###### Inputs:
 
--   job queue is empty.
+- job queue is empty.
 
 ###### Expected Output:
 
@@ -318,7 +318,7 @@ Tests behaviour when attempting to enqueue job already in queue.
 
 ###### Inputs:
 
--   job queue has job already enqueued.
+- job queue has job already enqueued.
 
 ###### Expected Output:
 
@@ -340,7 +340,7 @@ Tests the normal program flow.
 
 ###### Inputs:
 
--   job queue has pending jobs.
+- job queue has pending jobs.
 
 ###### Expected Output:
 
@@ -354,7 +354,7 @@ Tests behaviour when requested job is not in queue.
 
 ###### Inputs:
 
--   job queue is empty.
+- job queue is empty.
 
 ###### Expected Output:
 
@@ -366,7 +366,7 @@ Tests behaviour when requested job is not in queue
 
 ###### Inputs:
 
--   job queue has new but no pending jobs.
+- job queue has new but no pending jobs.
 
 ###### Expected Output:
 
@@ -378,7 +378,7 @@ Tests behaviour when requested job is reported by the wrong client.
 
 ###### Inputs:
 
--   job queue has jobs in pending.
+- job queue has jobs in pending.
 
 ###### Expected Output:
 
@@ -396,7 +396,7 @@ Tests the normal program flow.
 
 ###### Inputs:
 
--   job queue has new jobs.
+- job queue has new jobs.
 
 ###### Expected Output:
 
@@ -410,7 +410,7 @@ Tests behaviour when job queue is empty.
 
 ###### Inputs:
 
--   job queue is empty.
+- job queue is empty.
 
 ###### Expected Output:
 
@@ -422,7 +422,7 @@ Requested job is not in queue.
 
 ###### Inputs:
 
--   job queue has new but no pending jobs.
+- job queue has new but no pending jobs.
 
 ###### Expected Output:
 

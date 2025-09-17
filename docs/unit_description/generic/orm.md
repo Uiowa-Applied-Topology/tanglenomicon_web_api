@@ -1,12 +1,10 @@
-
 # Unit: Generic ORM
 
 ## Description
 
-Describes the orm module for the generic tangle module. 
+Describes the orm module for the generic tangle module.
 
 ## Diagrams
-
 
 ```mermaid
 

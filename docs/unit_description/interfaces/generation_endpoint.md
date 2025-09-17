@@ -1,4 +1,3 @@
-
 # Unit: generation api endpoint
 
 ## Description
@@ -6,7 +5,6 @@
 The generation endpoint interface. To be implemented by each generation use case.
 
 ## Diagrams
-
 
 ```mermaid
 

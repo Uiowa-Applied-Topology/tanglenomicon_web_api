@@ -2,7 +2,8 @@
 
 ## Description
 
-This class defines the secturity model for the tanglenomicon api. It's mostly wholsale lifted from [FastAPI docs](https://web.archive.org/web/20240324095137/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
+This class defines the secturity model for the tanglenomicon api. It's mostly wholsale lifted from
+[FastAPI docs](https://web.archive.org/web/20240324095137/https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
 
 ## Diagrams
 
@@ -129,5 +130,5 @@ stateDiagram-v2
 
 ## Unit test description
 
-These tests will be run manually. Since this is lifted from the fastAPI guide
-we trust it, this is perhaps a dubious thing to do.
+These tests will be run manually. Since this is lifted from the fastAPI guide we trust it, this is
+perhaps a dubious thing to do.

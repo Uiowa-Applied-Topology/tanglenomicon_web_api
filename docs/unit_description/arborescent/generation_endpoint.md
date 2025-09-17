@@ -1,8 +1,8 @@
-# Unit: Montesinos api endpoint
+# Unit: Arborescent api endpoint
 
 ## Description
 
-Implementation of the generation endpoint interface for the Montesinos use case.
+Implementation of the generation endpoint interface for the arborescent use case.
 
 ## Diagrams
 
@@ -17,8 +17,8 @@ namespace Interfaces {
 }
 
 
-namespace Montesinos {
-    class mge["Montesinos Generation Endpoint"]{
+namespace Arborescent {
+    class mge["Arborescent Generation Endpoint"]{
 
     }
 
@@ -30,7 +30,7 @@ mge ..|> age
 
 ```
 
-### report_montesinos_job
+### report_arborescent_job
 
 ```mermaid
 stateDiagram-v2
@@ -43,7 +43,7 @@ stateDiagram-v2
 
 ```
 
-### retrieve_montesinos_job
+### retrieve_arborescent_job
 
 ```mermaid
 stateDiagram-v2
@@ -60,7 +60,7 @@ stateDiagram-v2
 
 ```
 
-### retrieve_montesinos_job_queue_stats
+### retrieve_arborescent_job_queue_stats
 
 ```mermaid
 stateDiagram-v2
@@ -72,7 +72,7 @@ stateDiagram-v2
 
 ## Unit test description
 
-### retrieve_montesinos_job_queue_stats
+### retrieve_arborescent_job_queue_stats
 
 #### Positive Test
 
@@ -90,7 +90,7 @@ Jobs reported with correct counts.
 
 I can't think of any at the moment.
 
-### retrieve_montesinos_job
+### retrieve_arborescent_job
 
 #### Positive Test
 
@@ -128,7 +128,7 @@ Retrieve job with id matching the job in the new state.
 
 I can't think of any.
 
-### report_montesinos_job
+### report_arborescent_job
 
 #### Positive Test
 

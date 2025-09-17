@@ -2,10 +2,9 @@
 
 ## Description
 
-Describes the orm module for the rational tangle module. 
+Describes the orm module for the rational tangle module.
 
 ## Diagrams
-
 
 ```mermaid
 

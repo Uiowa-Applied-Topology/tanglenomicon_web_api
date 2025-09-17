@@ -1,4 +1,3 @@
-
 # Unit: Config Store
 
 ## Description
@@ -6,7 +5,6 @@
 This unit reads the config data for the server from a yaml file.
 
 ## Diagrams
-
 
 ```mermaid
 
@@ -23,7 +21,6 @@ class dc["Config Store"]{
 
 These tests will be run manually.
 
-
 ### Load Config
 
 #### Positive Tests
@@ -32,7 +29,7 @@ Test that a config can be loaded.
 
 ##### Inputs:
 
--   Valid config
+- Valid config
 
 ##### Expected Output:
 
@@ -46,7 +43,7 @@ Tests the behavior when invalid config are passed.
 
 ###### Inputs:
 
--   Invalid config
+- Invalid config
 
 ###### Expected Output:
 

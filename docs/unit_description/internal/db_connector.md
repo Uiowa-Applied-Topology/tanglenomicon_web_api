@@ -38,7 +38,7 @@ Test that a database can be connected to.
 
 ##### Inputs:
 
--   Valid credentials
+- Valid credentials
 
 ##### Expected Output:
 
@@ -52,7 +52,7 @@ Tests if the behavior when invalid credentials are passed.
 
 ###### Inputs:
 
--   Invalid credentials
+- Invalid credentials
 
 ###### Expected Output:
 

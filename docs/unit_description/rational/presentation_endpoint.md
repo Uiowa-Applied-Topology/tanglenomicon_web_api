@@ -29,7 +29,7 @@ classDiagram
 ```mermaid
 stateDiagram-v2
     state "Get tangles from db" as vj
-    [*] --> vj 
+    [*] --> vj
     vj  -->  [*]
 
 ```
@@ -74,4 +74,4 @@ Populated tangle database.
 
 ###### Expected Output:
 
-Empty list is returned. 
+Empty list is returned.

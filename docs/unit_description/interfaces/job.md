@@ -1,4 +1,3 @@
-
 # Unit: Job
 
 ## Description
@@ -6,7 +5,6 @@
 The interface that describes the minimum members of the job class.
 
 ## Diagrams
-
 
 ```mermaid
 

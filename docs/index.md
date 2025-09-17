@@ -1,6 +1,6 @@
 ```{include} ../README.md
-```
 
+```
 
 # API Reference
 
@@ -8,4 +8,3 @@
 :titlesonly:
 apidocs/index.rst
 ```
-

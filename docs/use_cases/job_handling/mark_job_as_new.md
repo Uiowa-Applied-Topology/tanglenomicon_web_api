@@ -10,7 +10,7 @@ Sets state for a job to new
 
 ## Preconditions:
 
-* Server is initialized
+- Server is initialized
 
 ## Trigger:
 
@@ -18,4 +18,4 @@ An upstream actor requests a job be marked as `new`
 
 ## Scenario:
 
-1) Set job to `new`
+1. Set job to `new`

@@ -5,19 +5,20 @@
 
 # Tanglenomicon Data Server API
 
-The Tanglenomicon data server API describes the API provided by the Tanglenomicon to read/write to the mongodb.
+The Tanglenomicon data server API describes the API provided by the Tanglenomicon to read/write to
+the mongodb.
 
 # Planning
 
 ## Tasks
 
-Tasks will be decomposed per feature. Each feature will include one or many endpoints. Issues will be tracked per
-report, combining where it makes sense.
+Tasks will be decomposed per feature. Each feature will include one or many endpoints. Issues will
+be tracked per report, combining where it makes sense.
 
 ## Version control
 
-Version control will be git based with GitHub as the source of truth. Work items will have a branch per work item.
-Merging a work item will be managed by GitHub pull requests.
+Version control will be git based with GitHub as the source of truth. Work items will have a branch
+per work item. Merging a work item will be managed by GitHub pull requests.
 
 ## Project Structure
 
@@ -45,13 +46,14 @@ Project structure will follow a standard python project structure
 
 ## Quality
 
-This project will be a public API for the tanglenomicon project. This requires a high level of validation. With the
-primary design goal of never crashing. While api R/W failures are acceptable with reporting.
+This project will be a public API for the tanglenomicon project. This requires a high level of
+validation. With the primary design goal of never crashing. While api R/W failures are acceptable
+with reporting.
 
 ### Unit testing
 
-Every unit is expected to have a unit test suite. Unit test suites are expected to flex every public interface of their
-unit. Code coverage is optional.
+Every unit is expected to have a unit test suite. Unit test suites are expected to flex every public
+interface of their unit. Code coverage is optional.
 
 ### Integration testing
 
@@ -129,15 +131,15 @@ use_cases/index.md
 
 ### Non-functional Requirements
 
-* Must be packaged as a docker container
-* Must run in linux
+- Must be packaged as a docker container
+- Must run in linux
 
 ## Technologies
 
 ### Languages/Frameworks
 
-The project will be written in python using the [fastapi](https://fastapi.tiangolo.com/) framework. All required
-packages are included in the `requirements.txt`
+The project will be written in python using the [fastapi](https://fastapi.tiangolo.com/) framework.
+All required packages are included in the `requirements.txt`
 
 Using a virtual environment is suggested from the root run in powershell:
 
@@ -160,13 +162,13 @@ to [https://github.com/psf/black](https://github.com/psf/black).
 
 ### Tools
 
-* vscode
-* mermaid.js
-* plantUML
-* python3
-* pytest
-* flake8
-* git
+- vscode
+- mermaid.js
+- plantUML
+- python3
+- pytest
+- flake8
+- git
 
 # Design and Documentation
 

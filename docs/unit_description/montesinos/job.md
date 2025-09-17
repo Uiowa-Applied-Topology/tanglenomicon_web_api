@@ -159,14 +159,14 @@ stateDiagram-v2
 
 ##### Requested count is 2
 
-This tests the behavior of the get jobs function when the requested count is 2.
-This is the normal positive behaviour.
+This tests the behavior of the get jobs function when the requested count is 2. This is the normal
+positive behaviour.
 
 ###### Inputs:
 
--   Mocked stencil collection two stencils one with no headroom.
--   Mocked valid rational collection.
--   Count set to 2.
+- Mocked stencil collection two stencils one with no headroom.
+- Mocked valid rational collection.
+- Count set to 2.
 
 ###### Expected Output:
 
@@ -176,14 +176,13 @@ The system is expected to return and enqueue 2 jobs. Stencils updated with open 
 
 ##### Stencil collection is empty
 
-This tests the behavior of the get jobs function when an empty Stencil collection
-is provided.
+This tests the behavior of the get jobs function when an empty Stencil collection is provided.
 
 ###### Inputs:
 
--   Mocked empty stencil collection.
--   Mocked valid rational collection.
--   Count set to 2.
+- Mocked empty stencil collection.
+- Mocked valid rational collection.
+- Count set to 2.
 
 ###### Expected Output:
 
@@ -191,14 +190,13 @@ The system is expected to return and enqueue no data.
 
 ##### Rational collection is empty
 
-This tests the behavior of the get jobs function when an empty rational collection
-is provided.
+This tests the behavior of the get jobs function when an empty rational collection is provided.
 
 ###### Inputs:
 
--   Mocked valid stencil collection.
--   Mocked empty rational collection.
--   Count set to 2.
+- Mocked valid stencil collection.
+- Mocked empty rational collection.
+- Count set to 2.
 
 ###### Expected Output:
 
@@ -210,9 +208,9 @@ This tests the behavior of the get jobs function when the requested count is 0.
 
 ###### Inputs:
 
--   Mocked valid stencil collection.
--   Mocked valid rational collection.
--   Count set to 0.
+- Mocked valid stencil collection.
+- Mocked valid rational collection.
+- Count set to 0.
 
 ###### Expected Output:
 
@@ -228,8 +226,8 @@ Successfully loads open jobs from collection.
 
 ###### Inputs:
 
--   Mocked valid stencil collection with min-new-count - 1 open jobs
--   Mocked valid rational collection
+- Mocked valid stencil collection with min-new-count - 1 open jobs
+- Mocked valid rational collection
 
 ###### Expected Output:
 
@@ -241,9 +239,9 @@ Collection has no open jobs so new jobs are created.
 
 ###### Inputs:
 
--   Mocked valid stencil collection with all stencils in new state
--   Mocked valid rational collection
--   Empty job queue
+- Mocked valid stencil collection with all stencils in new state
+- Mocked valid rational collection
+- Empty job queue
 
 ###### Expected Output:
 
@@ -261,13 +259,12 @@ Results are stored to database and stencil is updated
 
 ##### Inputs:
 
--   Mocked valid stencil collection with min-new-count - 1 open jobs
--   Mocked valid rational collection
+- Mocked valid stencil collection with min-new-count - 1 open jobs
+- Mocked valid rational collection
 
 ##### Expected Output:
 
 Enqueue jobs with correct id
-
 
 #### Negative Tests
 
