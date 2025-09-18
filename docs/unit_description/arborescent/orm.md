@@ -1,8 +1,8 @@
-# Unit Montesinos ORM
+# Unit arborescent ORM
 
 ## Description
 
-Describes the orm module for the montesinos tangle module.
+Describes the ORM module for the arborescent tangle module.
 
 ## Diagrams
 
@@ -10,34 +10,53 @@ Describes the orm module for the montesinos tangle module.
 
 classDiagram
     namespace Interfaces {
-        class schema["Montesinos Schema"] {
+        class schema["Arborescent Schema"] {
             <<struct>>
-            + string _id
-            + string parent_stencil
-            + int crossing_num
+            + ObjectId _id
+            + int ACN
+            + str notation
+            + str positivity
+            + bool is_good
         }
 
-        class schema_sten_job["Stencil Job Schema"] {
+        class schema["Arborescent Results Schema"] {
             <<struct>>
-            + string job_id
-            + List[int] cursor
+            + int ACN
+            + str notation
+            + str positivity
+            + bool is_good
+        }
+
+        class schema_sten_job["Job Schema"] {
+            <<struct>>
+            + ObjectId _id
+            + int state
+            + int rootstock_acn
+            + int scion_acn
+            + List[ObjectId] cursor
         }
 
         class schema_sten["Stencil Schema"] {
             <<struct>>
             + ObjectId _id
-            + List[int] stencil_array
-            + string str_rep
-            + int crossing_num
-            + List[int] head
+            + List[ObjectId] cursor
             + int state
-            + List[Stencil Job Schema] open_jobs
+            + int rootstock_acn
+            + int scion_acn
+        }
+
+        class schema_sten["Stencil Config Schema"] {
+            <<struct>>
+            + str _id
+            + int current_completed_acn
+            + int max_acn
         }
 
         class age["ORM"] {
             <<interface>>
             + get_stencil_collection()
-            + get_montesinos_collection()
+            + get_arborescent_collection()
+            + get_job_collection()
         }
     }
 ```

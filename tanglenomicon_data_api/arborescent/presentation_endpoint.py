@@ -1,10 +1,12 @@
 """Defines the public API endpoints to work/report on arborescent tangles."""
 
-from fastapi import Depends, APIRouter, HTTPException
-from . import orm, job
-from ..internal import job_queue
 from typing import Annotated, List
+
 from dacite import from_dict
+from fastapi import APIRouter, Depends, HTTPException
+
+from ..internal import job_queue
+from . import job, orm
 
 router = APIRouter(
     prefix="/arborescent",
@@ -20,53 +22,19 @@ router = APIRouter(
 
 
 async def _retrieve_arborescent_tangles(
-    start_id: str = None,
+    start_id: str = "",
     crossing_num_min: int = 0,
-    page_idx: int = 0,
     page_size: int = 100,
 ):
     if page_size <= 0:
         raise HTTPException(status_code=404, detail="Page size must be positive")
     tangle_col = orm.get_arborescent_collection()
-    if start_id is None:
-        tangle_page = (
-            await tangle_col.find(
-                {"crossing_num": {"$gte": crossing_num_min}, "isArborescent": True}
-            )
-            .sort([("crossing_num", 1), ("_id", 1)])
-            .limit(page_size)
-            .to_list(page_size)
-        )
-        for i in range(page_idx):
-            tangle_page = (
-                await tangle_col.find(
-                    {
-                        "isArborescent": True,
-                        "$or": [
-                            {"crossing_num": {"$gt": tangle_page[-1]["crossing_num"]}},
-                            {
-                                "crossing_num": tangle_page[-1]["crossing_num"],
-                                "_id": {"$gt": tangle_page[-1]["_id"]},
-                            },
-                        ],
-                    }
-                )
-                .sort([("crossing_num", 1), ("_id", 1)])
-                .limit(page_size)
-                .to_list(page_size)
-            )
-    else:
+    if start_id is not None:
         tangle_page = (
             await tangle_col.find(
                 {
-                    "isArborescent": True,
-                    "$or": [
-                        {"crossing_num": {"$gte": crossing_num_min}},
-                        {
-                            "crossing_num": crossing_num_min,
-                            "_id": {"$gt": start_id},
-                        },
-                    ],
+                    "ACN": crossing_num_min,
+                    "_id": {"$gt": start_id},
                 }
             )
             .sort([("crossing_num", 1), ("_id", 1)])
@@ -78,10 +46,10 @@ async def _retrieve_arborescent_tangles(
     ]
 
 
-@router.get("/tangles", response_model=List[orm.ArborescentTangle])
+@router.get("/tangles", response_model=List[orm.ArborescentTangleDB])
 async def retrieve_arborescent_tangles(
     tangle_list: Annotated[
-        List[orm.ArborescentTangle], Depends(_retrieve_arborescent_tangles)
+        List[orm.ArborescentTangleDB], Depends(_retrieve_arborescent_tangles)
     ],
 ):
     """Return the next arborescent job.

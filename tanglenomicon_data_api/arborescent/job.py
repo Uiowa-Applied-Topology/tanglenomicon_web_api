@@ -1,20 +1,22 @@
 """An implementation of the job interface for Arborescent jobs."""
 
 import asyncio
-from datetime import datetime, timezone, timedelta
+import copy
+import hashlib
+import itertools
+import logging
+import math
+from dataclasses import asdict
+from datetime import datetime, timedelta, timezone
+from typing import List
+
+from bson import ObjectId
+from dacite import from_dict
+from pymongo import InsertOne, UpdateOne
+
 from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal import config_store, job_queue
 from . import orm
-from typing import List
-from dacite import from_dict
-from dataclasses import asdict
-import math
-import copy
-from bson import ObjectId
-from pymongo import UpdateOne, InsertOne
-import logging
-import hashlib
-import itertools
 
 logger = logging.getLogger("uvicorn")
 
@@ -66,7 +68,7 @@ async def _get_stencil_config() -> orm.StencilCfg:
 class ArborescentJobResults(GenerationJobResults):
     """The implementation of job results for Arborescent jobs."""
 
-    arbor_list: List[orm.ArborescentTangle]
+    arbor_list: List[orm.AnborescentTangleResult]
 
 
 class ArborescentJob(GenerationJob):
@@ -175,9 +177,7 @@ class ArborescentJob(GenerationJob):
                         tangles_2_store = []
                 if len(tangles_2_store) > 0:
                     if (
-                        await arborescent_col.bulk_write(
-                            tangles_2_store, ordered=False
-                        )
+                        await arborescent_col.bulk_write(tangles_2_store, ordered=False)
                     ).bulk_api_result["writeErrors"]:
                         raise ValueError("Write errors")
             await job_col.delete_one({"_id": self._jobdb._id})
