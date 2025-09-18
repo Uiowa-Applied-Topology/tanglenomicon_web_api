@@ -7,7 +7,7 @@ flake8-variables-names
 flake8-fastapi
 flake8-eradicate
 pytest
-mongomock-motor
+mongomock
 anyio
 pytest-flake8
 pytest-html
@@ -40,3 +40,4 @@ pygount
 # pytest-mock-resources[mongo]
 typer
 sphinx-autobuild
+sphinx-material

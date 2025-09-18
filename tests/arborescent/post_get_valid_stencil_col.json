@@ -1,0 +1,26 @@
+[
+    {
+        "stencil_array": [10, 10],
+        "str_rep": "10 10",
+        "crossing_num": 20,
+        "head": [10, 10],
+        "state": 3,
+        "open_jobs": []
+    },
+    {
+        "stencil_array": [2, 10, 10],
+        "str_rep": "2 10 10",
+        "crossing_num": 22,
+        "head": [0, 0, 0],
+        "state": 0,
+        "open_jobs": []
+    },
+    {
+        "stencil_array": [13, 10],
+        "str_rep": "13 10",
+        "crossing_num": 23,
+        "head": [0, 0],
+        "state": 0,
+        "open_jobs": []
+    }
+]

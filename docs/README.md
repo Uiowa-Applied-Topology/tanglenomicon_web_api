@@ -6,7 +6,7 @@
 # Tanglenomicon Data Server API
 
 The Tanglenomicon data server API describes the API provided by the Tanglenomicon to read/write to
-the mongodb.
+the MongoDB.
 
 # Planning
 
@@ -22,9 +22,9 @@ per work item. Merging a work item will be managed by GitHub pull requests.
 
 ## Project Structure
 
-Project structure will follow a standard python project structure
+Project structure will follow a standard Python project structure
 
-```
+```text
 📦tanglenomicon_data_api
  ┣ 📂.github
  ┣ 📂docs
@@ -38,16 +38,16 @@ Project structure will follow a standard python project structure
  ┗ 📜setup.py
 ```
 
-- 📂tanglenomicon_data_api : Shall contains source code
+- 📂tanglenomicon_data_api : Shall contain source code
 - 📂test : Shall contain test code
 - 📂docs : Shall contain documentation for specific features
 
-## Define a Unit: A unit in this project shall be a python module.
+## Define a Unit: A unit in this project shall be a Python module.
 
 ## Quality
 
 This project will be a public API for the tanglenomicon project. This requires a high level of
-validation. With the primary design goal of never crashing. While api R/W failures are acceptable
+validation. With the primary design goal of never crashing. While API R/W failures are acceptable
 with reporting.
 
 ### Unit testing
@@ -131,44 +131,29 @@ use_cases/index.md
 
 ### Non-functional Requirements
 
-- Must be packaged as a docker container
-- Must run in linux
+- Must be packaged as a Docker container
+- Must run in Linux.
 
 ## Technologies
 
 ### Languages/Frameworks
 
-The project will be written in python using the [fastapi](https://fastapi.tiangolo.com/) framework.
+The project will be written in Python using the [FastAPI](https://fastapi.tiangolo.com/) framework.
 All required packages are included in the `requirements.txt`
-
-Using a virtual environment is suggested from the root run in powershell:
-
-```shell
-python -m venv py_venv
-.\py_venv\Scripts\Activate.ps1
-pip install -r .\requirements.txt
-```
-
-alternatively using the included just file:
-
-```shell
-just bootstrap
-```
 
 #### Style Guide
 
-All python files are expected to pass the configured flake8 without warnings this includes aligning
-to [https://github.com/psf/black](https://github.com/psf/black).
+All Python files are expected to pass the configured Flake8 without warnings this includes aligning
+to [Black](https://github.com/psf/black).
 
 ### Tools
 
-- vscode
-- mermaid.js
-- plantUML
-- python3
-- pytest
-- flake8
-- git
+- Mermaid.js
+- PlantUML
+- Python3
+- Pytest
+- Flake8
+- Git
 
 # Design and Documentation
 
@@ -231,6 +216,11 @@ flowchart LR
     ro -.-> o
 
 
+```
+
+```{toctree}
+:titlesonly:
+use_cases/index.md
 ```
 
 ## Units

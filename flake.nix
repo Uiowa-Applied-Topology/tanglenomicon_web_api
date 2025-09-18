@@ -181,7 +181,8 @@
             ];
             LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
 
-            shellHook = ''export LD_LIBRARY_PATH="$NIX_LD_LIBRARY_PATH"
+            shellHook = ''
+              export LD_LIBRARY_PATH="$NIX_LD_LIBRARY_PATH"
               export PATH=":$HOME/.local/share/JetBrains/Toolbox/scripts/:$HOME/.local/share/JetBrains/Toolbox/:$PATH"
               just bootstrap
               source .venv/bin/activate

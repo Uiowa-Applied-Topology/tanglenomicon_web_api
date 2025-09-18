@@ -2,6 +2,9 @@
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.append(str(Path("_ext").resolve()))
 
 # Configuration file for the Sphinx documentation builder.
 #
@@ -33,7 +36,7 @@ extensions = [
     # "sphinx_rtd_dark_mode",
     "sphinx_material",
     "custom_admonitions",
-    "sphinxcontrib.inkscapeconverter",
+    # "sphinxcontrib.inkscapeconverter",
 ]
 
 templates_path = ["_templates"]
@@ -129,19 +132,18 @@ myst_substitutions = {
 default_dark_mode = True
 html_theme = "sphinx_material"
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "dracula"
 
 # Material theme options (see theme.conf for more information)
 html_theme_options = {
     # Set the name of the project to appear in the navigation.
-    "nav_title": "The Tanglenomicon: Core Libraries",
+    "nav_title": "The Tanglenomicon: API",
     # Set the color and the accent color
     "theme_color": "001f3f",
     "color_primary": "#001f3f",
     "color_accent": "#7FDBFF",
     # Set the repo location to get a badge with stats
-    "repo_url": "https://github.com/Uiowa-Applied-Topology/tanglenomicon_core_libraries",
-    "repo_name": "tanglenomicon_core_libraries",
+    "repo_url": "https://github.com/Uiowa-Applied-Topology/tanglenomicon_data_api",
+    "repo_name": "tanglenomicon_data_api",
     "html_minify": True,
     "css_minify": True,
     "logo_icon": "",
