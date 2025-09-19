@@ -12,6 +12,9 @@ from tanglenomicon_data_api.internal import config_store as cfg
 from tanglenomicon_data_api.internal import db_connector as dbc
 from tanglenomicon_data_api.internal import job_queue
 
+test_path = Path.cwd() / Path("tests")
+fixture_path = test_path / Path("fixtures")
+
 
 class AsyncMongoMockClient:
     """
@@ -217,16 +220,11 @@ class AsyncCursorMock:
         return attr
 
 
-async def mock_init_beanie(database, document_models, **kwargs):
-    """Mock version of Beanie's init_beanie function."""
-    # Initialize mock collections for the document models if needed
-    for model in document_models:
-        # You can add model-specific initialization here if needed
-        pass
-
-
-test_path = Path.cwd() / Path("tests")
-fixture_path = test_path / Path("fixtures")
+##################################################################################
+##################################################################################
+# fixture loading functions
+##################################################################################
+##################################################################################
 
 
 def _load_fixture(path: Path) -> dict:
@@ -234,7 +232,6 @@ def _load_fixture(path: Path) -> dict:
     with open(path) as f:
         dat = json.load(f)
     return dat
-    ...
 
 
 @pytest.fixture
@@ -282,9 +279,12 @@ async def empty_arborescent_col(get_test_cfg, setup_database):
 
 
 @pytest.fixture
-async def empty_arborescent_job_col(get_test_cfg, setup_database):
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+async def valid_arborescent_col(get_test_cfg, setup_database):
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
+    dat = _load_fixture(fixture_path / "valid_arborescent_col.json")
+
     await col.delete_many({})
+    await col.insert_many(dat)
     yield
     await col.delete_many({})
 
@@ -297,16 +297,7 @@ async def empty_arborescent_stencil_col(get_test_cfg, setup_database):
     await col.delete_many({})
 
 
-async def valid_arborescent_job_col(get_test_cfg, setup_database):
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
-    dat = _load_fixture(fixture_path / "valid_stencil_col.json")
-
-    await col.delete_many({})
-    await col.insert_many(dat)
-    yield
-    await col.delete_many({})
-
-
+@pytest.fixture
 async def valid_arborescent_stencil_col(get_test_cfg, setup_database):
     col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
     dat = _load_fixture(fixture_path / "valid_stencil_col.json")
@@ -329,9 +320,17 @@ async def valid_arborescent_stencil_col_all_new(get_test_cfg, setup_database):
 
 
 @pytest.fixture
-async def valid_arborescent_col(get_test_cfg, setup_database):
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
-    dat = _load_fixture(fixture_path / "valid_arborescent_col.json")
+async def empty_arborescent_job_col(get_test_cfg, setup_database):
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["job_col_name"]]
+    await col.delete_many({})
+    yield
+    await col.delete_many({})
+
+
+@pytest.fixture
+async def valid_arborescent_job_col(get_test_cfg, setup_database):
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["job_col_name"]]
+    dat = _load_fixture(fixture_path / "valid_job_col.json")
 
     await col.delete_many({})
     await col.insert_many(dat)

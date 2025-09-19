@@ -307,7 +307,7 @@ async def startup_task():
     ...
 
 
-async def set_stencils_complete():
+async def _set_stencils_complete():
     global _stencil_cfg
     while True:
         await asyncio.sleep(5)

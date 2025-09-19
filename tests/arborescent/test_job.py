@@ -1,25 +1,26 @@
-"""Unit tests for the montesinos module."""
+"""Unit tests for the arborescent module."""
 
-import pytest
 import json
 from datetime import datetime, timezone
-from mongomock_motor import AsyncMongoMockClient
 from pathlib import Path
-from tanglenomicon_data_api.montesinos.job import (
-    get_jobs,
-    startup_task,
-    MontesinosJob,
-    MontesinosJobResults,
-)
-from tanglenomicon_data_api.internal import config_store as cfg
-from tanglenomicon_data_api.internal import job_queue as jq
-from tanglenomicon_data_api.internal import db_connector as dbc
-from tanglenomicon_data_api.interfaces.job import JobStateEnum
 
+import pytest
+from mongomock_motor import AsyncMongoMockClient
+
+from tanglenomicon_data_api.arborescent.job import (
+    ArborescentJob,
+    ArborescentJobResults,
+    load_jobs,
+    startup_task,
+)
+from tanglenomicon_data_api.interfaces.job import JobStateEnum
+from tanglenomicon_data_api.internal import config_store as cfg
+from tanglenomicon_data_api.internal import db_connector as dbc
+from tanglenomicon_data_api.internal import job_queue as jq
 
 pytestmark = pytest.mark.anyio
 
-test_path = Path.cwd() / Path("tests/montesinos")
+test_path = Path.cwd() / Path("tests/arborescent")
 
 
 def _load_data(path: Path) -> dict:
@@ -47,19 +48,19 @@ async def test_get_jobs_positive(
     setup_database,
     setup_job_queue,
     valid_rational_col,
-    valid_montesinos_stencil_col,
+    valid_arborescent_stencil_col,
 ):
     await get_jobs(3)
     jobs = _load_data(test_path / "valid_jobs_for_get_jobs.json")
     enqueued_jobs = [
         jq._job_queue[i].rat_lists
         for i in jq._job_queue
-        if isinstance(jq._job_queue[i], MontesinosJob)
+        if isinstance(jq._job_queue[i], ArborescentJob)
     ]
     for job in jobs:
         assert job in enqueued_jobs
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
 
     stencils = {}
     async for s in col.find({}):
@@ -80,13 +81,13 @@ async def test_get_jobs_stencil_collection_is_empty(
     setup_database,
     setup_job_queue,
     valid_rational_col,
-    empty_montesinos_stencil_col,
+    empty_arborescent_stencil_col,
 ):
     await get_jobs(2)
     enqueued_jobs = [
         jq._job_queue[i].rat_lists
         for i in jq._job_queue
-        if isinstance(jq._job_queue[i], MontesinosJob)
+        if isinstance(jq._job_queue[i], ArborescentJob)
     ]
     assert [] == enqueued_jobs
     ...
@@ -97,7 +98,7 @@ async def test_get_jobs_rational_collection_is_empty(
     setup_database,
     setup_job_queue,
     empty_rational_col,
-    valid_montesinos_stencil_col,
+    valid_arborescent_stencil_col,
 ):
     try:
         await get_jobs(2)
@@ -112,13 +113,13 @@ async def test_get_jobs_request_zero(
     setup_database,
     setup_job_queue,
     valid_rational_col,
-    valid_montesinos_stencil_col,
+    valid_arborescent_stencil_col,
 ):
     await get_jobs(0)
     enqueued_jobs = [
         jq._job_queue[i].rat_lists
         for i in jq._job_queue
-        if isinstance(jq._job_queue[i], MontesinosJob)
+        if isinstance(jq._job_queue[i], ArborescentJob)
     ]
     assert [] == enqueued_jobs
     ...
@@ -132,19 +133,19 @@ async def test_get_jobs_request_zero(
 
 
 async def test_startup_task_positive(
-    get_test_cfg, setup_job_queue, valid_rational_col, valid_montesinos_stencil_col
+    get_test_cfg, setup_job_queue, valid_rational_col, valid_arborescent_stencil_col
 ):
     await startup_task()
     jobs = _load_data(test_path / "valid_jobs_for_startup.json")
     enqueued_jobs = [
         jq._job_queue[i].rat_lists
         for i in jq._job_queue
-        if isinstance(jq._job_queue[i], MontesinosJob)
+        if isinstance(jq._job_queue[i], ArborescentJob)
     ]
     for job in jobs:
         assert job in enqueued_jobs
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
 
     stencils = {}
     async for s in col.find({}):
@@ -164,19 +165,19 @@ async def test_startup_task_positive_all_new(
     get_test_cfg,
     setup_job_queue,
     valid_rational_col,
-    valid_montesinos_stencil_col_all_new,
+    valid_arborescent_stencil_col_all_new,
 ):
     await startup_task()
     jobs = _load_data(test_path / "valid_jobs_for_startup_all_new.json")
     enqueued_jobs = [
         jq._job_queue[i].rat_lists
         for i in jq._job_queue
-        if isinstance(jq._job_queue[i], MontesinosJob)
+        if isinstance(jq._job_queue[i], ArborescentJob)
     ]
     for job in jobs:
         assert job in enqueued_jobs
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
 
     stencils = {}
     async for s in col.find({}):
@@ -194,7 +195,7 @@ async def test_startup_task_positive_all_new(
 
 ################################################################################
 ################################################################################
-# Test cases for the MontesinosJob.store function
+# Test cases for the ArborescentJob.store function
 ################################################################################
 ################################################################################
 
@@ -203,13 +204,13 @@ async def test_mj_store_task_positive(
     get_test_cfg,
     setup_database,
     setup_job_queue,
-    valid_montesinos_stencil_col,
-    empty_montesinos_col,
+    valid_arborescent_stencil_col,
+    empty_arborescent_col,
 ):
     job_id = "A test job"
     results_tangs = ["a", "b", "c"]
-    res = MontesinosJobResults(job_id=job_id, mont_list=results_tangs)
-    job = MontesinosJob(
+    res = ArborescentJobResults(job_id=job_id, mont_list=results_tangs)
+    job = ArborescentJob(
         cur_state=JobStateEnum.pending,
         timestamp=datetime.now(timezone.utc),
         crossing_num=0,
@@ -221,12 +222,12 @@ async def test_mj_store_task_positive(
 
     await job.store()
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["stencil_col_name"]]
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
 
     stencil = await col.find_one({"open_jobs.job_id": job_id})
     assert stencil == None
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["montesinos"]["col_name"]]
+    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
     async for m in col.find({}):
         assert m["_id"] in results_tangs
 

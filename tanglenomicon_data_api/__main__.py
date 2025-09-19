@@ -1,23 +1,26 @@
 """The __main__ file/entry point for tanglenomicon_data_api."""
 
-from .montesinos import generation_endpoint as mont_ge
-from .montesinos import presentation_endpoint as mont_pe
-from .montesinos import job as mont_j
-from .arborescent import generation_endpoint as arbor_ge
-from .arborescent import presentation_endpoint as arbor_pe
-from .arborescent import job as arbor_j
-from .generic import presentation_endpoint as gen_pe
-from .rational import presentation_endpoint as rat_pe
-from .internal import config_store, db_connector, security, job_queue
-from fastapi import FastAPI
-from uvicorn import Config as UCfg, Server as USrv
-import typer
 import asyncio
-from asyncio import AbstractEventLoop
-from typing_extensions import Annotated
-from getpass import getpass, getuser
-from fastapi.middleware.cors import CORSMiddleware
 import logging
+from asyncio import AbstractEventLoop
+from getpass import getpass, getuser
+
+import typer
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from typing_extensions import Annotated
+from uvicorn import Config as UCfg
+from uvicorn import Server as USrv
+
+from .arborescent import generation_endpoint as arbor_ge
+from .arborescent import job as arbor_j
+from .arborescent import presentation_endpoint as arbor_pe
+from .generic import presentation_endpoint as gen_pe
+from .internal import config_store, db_connector, job_queue, security
+from .montesinos import generation_endpoint as mont_ge
+from .montesinos import job as mont_j
+from .montesinos import presentation_endpoint as mont_pe
+from .rational import presentation_endpoint as rat_pe
 
 logging.basicConfig()
 # logging.getLogger().setLevel(logging.DEBUG)
@@ -30,7 +33,7 @@ job_defs = [
     mont_j.startup_task,
     arbor_j.startup_task,
     arbor_j.time_job,
-    arbor_j.set_stencils_complete,
+    arbor_j._set_stencils_complete,
     job_queue.task_clean_complete_jobs,
     job_queue.task_clean_stale_jobs,
 ]
