@@ -1,8 +1,9 @@
 """The Job interfaces."""
 
 from datetime import datetime
-from pydantic import BaseModel
 from enum import Enum
+
+from pydantic import BaseModel
 
 
 class JobStateEnum(str, Enum):
@@ -11,6 +12,7 @@ class JobStateEnum(str, Enum):
     new = "new"
     pending = "pending"
     complete = "complete"
+    writing = "writing"
 
 
 class GenerationJobResults(BaseModel):

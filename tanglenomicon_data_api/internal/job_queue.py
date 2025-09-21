@@ -1,13 +1,13 @@
 """Job Queue handles the tangle generation job "queue"."""
 
+import asyncio
+import logging
+from datetime import datetime, timezone
+from typing import Dict, List, Type
+
 from ..interfaces.job import GenerationJob, GenerationJobResults, JobStateEnum
 from ..internal.security import User
 from . import config_store
-
-from typing import Dict, Type, List
-from datetime import datetime, timezone
-import asyncio
-import logging
 
 logger = logging.getLogger("uvicorn")
 
@@ -17,8 +17,8 @@ jq_lock: asyncio.Lock = asyncio.Lock()
 task_lock: asyncio.Lock = asyncio.Lock()
 
 
-async def aiterjq():
-    """sdfsdfsdf."""
+async def _aiterjq():
+    """Async wrapper for job queue iteration."""
     for i in _job_queue:
         yield i
 
@@ -39,7 +39,7 @@ async def _get_count(job_type: Type[GenerationJob] = GenerationJob) -> int:
     global jq_lock
     async with jq_lock:
         return len(
-            [i async for i in aiter(aiterjq()) if isinstance(_job_queue[i], job_type)]
+            [i async for i in aiter(_aiterjq()) if isinstance(_job_queue[i], job_type)]
         )
 
 
@@ -61,7 +61,7 @@ async def _get_count_new(job_type: Type[GenerationJob] = GenerationJob) -> int:
         return len(
             [
                 i
-                async for i in aiter(aiterjq())
+                async for i in aiter(_aiterjq())
                 if isinstance(_job_queue[i], job_type)
                 and _job_queue[i].cur_state == JobStateEnum.new
             ]
@@ -87,9 +87,35 @@ async def _get_count_complete(job_type: Type[GenerationJob] = GenerationJob) -> 
         return len(
             [
                 i
-                async for i in aiter(aiterjq())
+                async for i in aiter(_aiterjq())
                 if isinstance(_job_queue[i], job_type)
                 and _job_queue[i].cur_state == JobStateEnum.complete
+            ]
+        )
+
+
+async def _get_count_writing(job_type: Type[GenerationJob] = GenerationJob) -> int:
+    """Get the number of jobs from the queue in the 'writing' state.
+
+    Parameters
+    ----------
+    job_type : Type[generation_job], optional
+        The type of job to find, by default GenerationJob.
+
+    Returns
+    -------
+    int
+        The count.
+    """
+
+    global jq_lock
+    async with jq_lock:
+        return len(
+            [
+                i
+                async for i in aiter(_aiterjq())
+                if isinstance(_job_queue[i], job_type)
+                and _job_queue[i].cur_state == JobStateEnum.writing
             ]
         )
 
@@ -112,7 +138,7 @@ async def _get_count_pending(job_type: Type[GenerationJob] = GenerationJob) -> i
         return len(
             [
                 i
-                async for i in aiter(aiterjq())
+                async for i in aiter(_aiterjq())
                 if isinstance(_job_queue[i], job_type)
                 and _job_queue[i].cur_state == JobStateEnum.pending
             ]
@@ -150,7 +176,7 @@ async def _clean_stale_jobs():
         async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
-                async for i in aiterjq()
+                async for i in _aiterjq()
                 if (_is_above_time_delta(_job_queue[i].timestamp))
                 and (_job_queue[i].cur_state != JobStateEnum.complete)
                 and (_job_queue[i].cur_state != JobStateEnum.new)
@@ -174,18 +200,22 @@ async def _clean_complete_jobs():
     global _job_queue
     global jq_lock
     global task_lock
+
+    items: List[GenerationJob] = []
     async with task_lock:
         async with jq_lock:
             items: List[GenerationJob] = [
                 _job_queue[i]
-                async for i in aiterjq()
+                async for i in _aiterjq()
                 if _job_queue[i].cur_state == JobStateEnum.complete
             ]
             logger.debug(f"Storing {len(items)} jobs.")
+            for item in items:
+                item.cur_state = JobStateEnum.writing
 
-            async with asyncio.TaskGroup() as tg:
-                for item in items:
-                    tg.create_task(_store_and_remove(item))
+    async with asyncio.TaskGroup() as tg:
+        for item in items:
+            tg.create_task(_store_and_remove(item))
 
 
 async def mark_job_complete(results: GenerationJobResults, current_user: User) -> bool:
@@ -246,7 +276,7 @@ async def get_next_job(
     async with jq_lock:
         items = [
             i
-            async for i in aiter(aiterjq())
+            async for i in aiter(_aiterjq())
             if isinstance(_job_queue[i], job_type)
             and _job_queue[i].cur_state == JobStateEnum.new
         ]
@@ -300,6 +330,7 @@ async def get_job_statistics(job_type: Type[GenerationJob] = GenerationJob) -> d
         "new": await _get_count_new(job_type),
         "pending": await _get_count_pending(job_type),
         "complete": await _get_count_complete(job_type),
+        "writing": await _get_count_writing(job_type),
     }
 
 
