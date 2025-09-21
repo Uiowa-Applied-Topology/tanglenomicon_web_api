@@ -1,21 +1,22 @@
 """Unit tests for the montesinos module."""
 
-import pytest
 import json
 from datetime import datetime, timezone
-from mongomock_motor import AsyncMongoMockClient
 from pathlib import Path
+
+import pytest
+from mongomock_motor import AsyncMongoMockClient
+
+from tanglenomicon_data_api.interfaces.job import JobStateEnum
+from tanglenomicon_data_api.internal import config_store as cfg
+from tanglenomicon_data_api.internal import db_connector as dbc
+from tanglenomicon_data_api.internal import job_queue as jq
 from tanglenomicon_data_api.montesinos.job import (
-    get_jobs,
-    startup_task,
     MontesinosJob,
     MontesinosJobResults,
+    get_jobs,
+    startup_task,
 )
-from tanglenomicon_data_api.internal import config_store as cfg
-from tanglenomicon_data_api.internal import job_queue as jq
-from tanglenomicon_data_api.internal import db_connector as dbc
-from tanglenomicon_data_api.interfaces.job import JobStateEnum
-
 
 pytestmark = pytest.mark.anyio
 

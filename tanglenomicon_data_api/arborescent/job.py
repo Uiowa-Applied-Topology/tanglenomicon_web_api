@@ -255,12 +255,12 @@ async def _process_stencil(stencil: orm.StencilDB):
                 ),
             ]
 
-        async def prod(l1):
+        async def _prod(l1):
             for i in l1:
                 yield i
 
-        async for root_idx in prod(tasks[0].result()):
-            async for scion_idx in prod(tasks[1].result()):
+        async for root_idx in _prod(tasks[0].result()):
+            async for scion_idx in _prod(tasks[1].result()):
                 await job_col.insert_one(
                     {
                         "state": orm.JobDBStateEnum.new,
@@ -307,11 +307,11 @@ async def startup_task():
     ...
 
 
-async def _set_stencils_complete():
-    global _stencil_cfg
-    while True:
-        await asyncio.sleep(5)
-        ...
+# async def _set_stencils_complete():
+#     global _stencil_cfg
+#     while True:
+#         await asyncio.sleep(5)
+#         ...
 
 
 async def time_job():

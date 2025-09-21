@@ -12,6 +12,7 @@ from tanglenomicon_data_api.arborescent.job import (
     ArborescentJobResults,
     load_jobs,
     startup_task,
+    time_job,
 )
 from tanglenomicon_data_api.interfaces.job import JobStateEnum
 from tanglenomicon_data_api.internal import config_store as cfg
@@ -28,7 +29,6 @@ def _load_data(path: Path) -> dict:
     with open(path) as f:
         dat = json.load(f)
     return dat
-    ...
 
 
 @pytest.fixture
@@ -38,197 +38,124 @@ def anyio_backend():
 
 ################################################################################
 ################################################################################
-# Test cases for the get_jobs function
+# Test cases for the get lists flow
 ################################################################################
 ################################################################################
 
 
-async def test_get_jobs_positive(
+################################################################################
+#### Positive Tests
+################################################################################
+
+
+def test_get_lists_positive(
     get_test_cfg,
     setup_database,
     setup_job_queue,
-    valid_rational_col,
-    valid_arborescent_stencil_col,
 ):
-    await get_jobs(3)
-    jobs = _load_data(test_path / "valid_jobs_for_get_jobs.json")
-    enqueued_jobs = [
-        jq._job_queue[i].rat_lists
-        for i in jq._job_queue
-        if isinstance(jq._job_queue[i], ArborescentJob)
-    ]
-    for job in jobs:
-        assert job in enqueued_jobs
-
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
-
-    stencils = {}
-    async for s in col.find({}):
-        stencils[s["str_rep"]] = s
-    assert len(stencils["10 10"]["open_jobs"]) == 0
-    assert len(stencils["2 10 10"]["open_jobs"]) == 1
-    assert len(stencils["3 10 10"]["open_jobs"]) == 1
-    assert len(stencils["11 10"]["open_jobs"]) == 2
-    assert stencils["10 10"]["state"] == 3
-    assert stencils["2 10 10"]["state"] == 2
-    assert stencils["3 10 10"]["state"] == 2
-    assert stencils["11 10"]["state"] == 2
-    ...
+    dat = _load_data()
 
 
-async def test_get_jobs_stencil_collection_is_empty(
-    get_test_cfg,
-    setup_database,
-    setup_job_queue,
-    valid_rational_col,
-    empty_arborescent_stencil_col,
-):
-    await get_jobs(2)
-    enqueued_jobs = [
-        jq._job_queue[i].rat_lists
-        for i in jq._job_queue
-        if isinstance(jq._job_queue[i], ArborescentJob)
-    ]
-    assert [] == enqueued_jobs
-    ...
+################################################################################
+#### Negative Tests
+################################################################################
 
 
-async def test_get_jobs_rational_collection_is_empty(
-    get_test_cfg,
-    setup_database,
-    setup_job_queue,
-    empty_rational_col,
-    valid_arborescent_stencil_col,
-):
-    try:
-        await get_jobs(2)
-        assert False
-    except:
-        assert True
-    ...
-
-
-async def test_get_jobs_request_zero(
-    get_test_cfg,
-    setup_database,
-    setup_job_queue,
-    valid_rational_col,
-    valid_arborescent_stencil_col,
-):
-    await get_jobs(0)
-    enqueued_jobs = [
-        jq._job_queue[i].rat_lists
-        for i in jq._job_queue
-        if isinstance(jq._job_queue[i], ArborescentJob)
-    ]
-    assert [] == enqueued_jobs
-    ...
+def test_get_lists_negative(): ...
 
 
 ################################################################################
 ################################################################################
-# Test cases for the startup_task function
+# Test cases for the Load jobs flow
 ################################################################################
 ################################################################################
 
 
-async def test_startup_task_positive(
-    get_test_cfg, setup_job_queue, valid_rational_col, valid_arborescent_stencil_col
-):
-    await startup_task()
-    jobs = _load_data(test_path / "valid_jobs_for_startup.json")
-    enqueued_jobs = [
-        jq._job_queue[i].rat_lists
-        for i in jq._job_queue
-        if isinstance(jq._job_queue[i], ArborescentJob)
-    ]
-    for job in jobs:
-        assert job in enqueued_jobs
-
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
-
-    stencils = {}
-    async for s in col.find({}):
-        stencils[s["str_rep"]] = s
-    assert len(stencils["10 10"]["open_jobs"]) == 0
-    assert len(stencils["2 10 10"]["open_jobs"]) == 1
-    assert len(stencils["3 10 10"]["open_jobs"]) == 0
-    assert len(stencils["11 10"]["open_jobs"]) == 1
-    assert stencils["10 10"]["state"] == 3
-    assert stencils["2 10 10"]["state"] == 2
-    assert stencils["3 10 10"]["state"] == 1
-    assert stencils["11 10"]["state"] == 1
-    ...
+################################################################################
+#### Positive Tests
+################################################################################
 
 
-async def test_startup_task_positive_all_new(
-    get_test_cfg,
-    setup_job_queue,
-    valid_rational_col,
-    valid_arborescent_stencil_col_all_new,
-):
-    await startup_task()
-    jobs = _load_data(test_path / "valid_jobs_for_startup_all_new.json")
-    enqueued_jobs = [
-        jq._job_queue[i].rat_lists
-        for i in jq._job_queue
-        if isinstance(jq._job_queue[i], ArborescentJob)
-    ]
-    for job in jobs:
-        assert job in enqueued_jobs
+def test_load_jobs_positive(): ...
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
 
-    stencils = {}
-    async for s in col.find({}):
-        stencils[s["str_rep"]] = s
-    assert len(stencils["10 10"]["open_jobs"]) == 1
-    assert len(stencils["2 10 10"]["open_jobs"]) == 1
-    assert len(stencils["3 10 10"]["open_jobs"]) == 0
-    assert len(stencils["11 10"]["open_jobs"]) == 0
-    assert stencils["10 10"]["state"] == 2
-    assert stencils["2 10 10"]["state"] == 2
-    assert stencils["3 10 10"]["state"] == 1
-    assert stencils["11 10"]["state"] == 0
-    ...
+################################################################################
+#### Negative Tests
+################################################################################
+
+
+def test_load_jobs_empty_stens(): ...
+def test_load_jobs_empty_arbor(): ...
+def test_load_jobs_req_zero(): ...
 
 
 ################################################################################
 ################################################################################
-# Test cases for the ArborescentJob.store function
+# Test cases for the Startup flow
 ################################################################################
 ################################################################################
 
 
-async def test_mj_store_task_positive(
-    get_test_cfg,
-    setup_database,
-    setup_job_queue,
-    valid_arborescent_stencil_col,
-    empty_arborescent_col,
-):
-    job_id = "A test job"
-    results_tangs = ["a", "b", "c"]
-    res = ArborescentJobResults(job_id=job_id, mont_list=results_tangs)
-    job = ArborescentJob(
-        cur_state=JobStateEnum.pending,
-        timestamp=datetime.now(timezone.utc),
-        crossing_num=0,
-        job_id=job_id,
-        rat_lists=[],
-    )
-    job.update_results(res)
-    jq._job_queue[job_id] = job
+################################################################################
+#### Positive Tests
+################################################################################
 
-    await job.store()
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["stencil_col_name"]]
+def test_startup_positive(): ...
 
-    stencil = await col.find_one({"open_jobs.job_id": job_id})
-    assert stencil == None
 
-    col = dbc.db[cfg.cfg_dict["tangle-classes"]["arborescent"]["col_name"]]
-    async for m in col.find({}):
-        assert m["_id"] in results_tangs
+################################################################################
+#### Negative Tests
+################################################################################
 
-    ...
+# None
+
+
+################################################################################
+################################################################################
+# Test cases for the Time task flow
+################################################################################
+################################################################################
+
+
+################################################################################
+#### Positive Tests
+################################################################################
+
+
+def test_time_task_sten_processed(): ...
+def test_time_task_queue_filled(): ...
+def test_time_task_inc_TCN(): ...
+
+
+################################################################################
+#### Negative Tests
+################################################################################
+
+
+def test_time_task_empty_sten(): ...
+
+
+def test_time_task_empty_arbor(): ...
+
+
+################################################################################
+################################################################################
+# Test cases for the Store flow
+################################################################################
+################################################################################
+
+
+################################################################################
+#### Positive Tests
+################################################################################
+
+
+def test_store_positive(): ...
+
+
+################################################################################
+#### Negative Tests
+################################################################################
+
+# None

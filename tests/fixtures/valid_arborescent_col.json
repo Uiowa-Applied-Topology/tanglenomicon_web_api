@@ -1,0 +1,16 @@
+[
+    {
+        "ACN":2,
+        "notation":"i[2]",
+        "positivity":"neutral",
+        "is_good": true,
+        "_id":"68cf9cdeeaa954b437b9126f"
+    },
+    {
+        "ACN":2,
+        "notation":"i[-2]",
+        "positivity":"neutral",
+        "is_good": true,
+        "_id":"68cf9d25803722b7f5f5be2d"
+    }
+]

@@ -6,8 +6,6 @@ auth:
 job-queue:
     min-new-count: 2
     clocks:
-      # stale: 1800
-      # complete: 1800
       stale: 10
       complete: 10
 tangle-classes:
@@ -19,3 +17,8 @@ tangle-classes:
         col_name: "rational"
     generic:
         col_name: "rational"
+    arborescent:
+        stencil_col_name: "arbor_stencils"
+        job_col_name: "arbor_jobs"
+        col_name: "arbor"
+        page_size: 500

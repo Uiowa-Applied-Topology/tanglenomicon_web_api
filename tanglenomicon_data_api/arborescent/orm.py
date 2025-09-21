@@ -98,7 +98,7 @@ class StencilDB:
 class ArborescentTangleDB:
     """A arborescent tangle to be read from the tangle collection."""
 
-    _id: ObjectId
+    _id: str
     notation: str
     positivity: str
     is_good: bool
