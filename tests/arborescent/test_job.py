@@ -5,8 +5,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
-from mongomock_motor import AsyncMongoMockClient
+from bson import ObjectId
+from dacite import from_dict
 
+from tanglenomicon_data_api.arborescent import orm
 from tanglenomicon_data_api.arborescent.job import (
     ArborescentJob,
     ArborescentJobResults,
@@ -36,25 +38,6 @@ def anyio_backend():
     return "asyncio"
 
 
-@pytest.fixture
-async def setup_job_queue(
-    get_test_cfg,
-):
-    # stub the db connection.
-    jq._job_queue = {}
-    jq._job_queue["68c3880635edfa4df81b1a46"] = ArborescentJob(
-        job_id=str("68c3880635edfa4df81b1a46"),
-        cur_state=JobStateEnum.new,
-        timestamp=datetime.now(timezone.utc),
-        ACN=6,
-        grafting_lists=[[]],
-    )
-
-    yield  # Provide the data to the test
-    jq._job_queue = {}
-    # Teardown: Clean up resources (if any) after the test
-
-
 ################################################################################
 ################################################################################
 # Test cases for the get lists flow
@@ -67,12 +50,29 @@ async def setup_job_queue(
 ################################################################################
 
 
-def test_get_lists_positive(
+async def test_get_lists_positive(
     get_test_cfg,
     setup_database,
+    valid_arborescent_col,
     setup_job_queue,
 ):
-    dat = _load_data()
+    job_db = {
+        "_id": ObjectId("68c3880635edfa4df81b1a46"),
+        "state": 0,
+        "rootstock_acn": 2,
+        "scion_acn": 4,
+        "cursor": ["68c3886f35edfa4df81b1ba8", "68c3886f35edfa4df81b1b74"],
+    }
+    # stub the db connection.
+    job = ArborescentJob(
+        job_id=str("68c3880635edfa4df81b1a46"),
+        cur_state=JobStateEnum.new,
+        timestamp=datetime.now(timezone.utc),
+        ACN=6,
+        grafting_lists=[[]],
+    )
+    job.set_jobdb(from_dict(data_class=orm.JobDB, data=job_db))
+    await job.get_lists()
 
 
 ################################################################################
