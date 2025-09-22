@@ -36,6 +36,25 @@ def anyio_backend():
     return "asyncio"
 
 
+@pytest.fixture
+async def setup_job_queue(
+    get_test_cfg,
+):
+    # stub the db connection.
+    jq._job_queue = {}
+    jq._job_queue["68c3880635edfa4df81b1a46"] = ArborescentJob(
+        job_id=str("68c3880635edfa4df81b1a46"),
+        cur_state=JobStateEnum.new,
+        timestamp=datetime.now(timezone.utc),
+        ACN=6,
+        grafting_lists=[[]],
+    )
+
+    yield  # Provide the data to the test
+    jq._job_queue = {}
+    # Teardown: Clean up resources (if any) after the test
+
+
 ################################################################################
 ################################################################################
 # Test cases for the get lists flow

@@ -21,4 +21,4 @@ tangle-classes:
         stencil_col_name: "arbor_stencils"
         job_col_name: "arbor_jobs"
         col_name: "arbor"
-        page_size: 500
+        page_size: 1 

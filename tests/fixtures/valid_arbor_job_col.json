@@ -1,0 +1,11 @@
+[
+    {
+        "_id": {
+            "$oid": "68c3880635edfa4df81b1a46"
+        },
+        "state": 0,
+        "rootstock_acn": 2,
+        "scion_acn": 4,
+        "cursor": ["68c3886f35edfa4df81b1ba8", "68c3886f35edfa4df81b1b74"]
+    }
+]
