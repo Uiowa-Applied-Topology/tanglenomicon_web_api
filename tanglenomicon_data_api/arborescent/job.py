@@ -38,27 +38,6 @@ def _open_stencil(acn: int):
     }
 
 
-def _complete_stencil(acn: int):
-    return {
-        "$and": [
-            {"state": orm.StencilStateEnum.complete},
-            {"ACN": {"$lte": acn}},
-            {"rootstock_acn": {"$ne": 0}},
-            {"_id": {"$ne": "config"}},
-        ]
-    }
-
-
-def _not_complete_filter(acn: int):
-    return {
-        "$and": [
-            {"ACN": {"$lte": acn}},
-            {"state": {"$ne": orm.StencilStateEnum.complete}},
-            {"_id": {"$ne": "config"}},
-        ]
-    }
-
-
 async def _get_stencil_config() -> orm.StencilCfg:
     stencil_col = orm.get_stencil_collection()
     stencil = await stencil_col.find_one({"_id": "config"})

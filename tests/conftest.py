@@ -135,7 +135,7 @@ class AsyncCollectionMock:
     def __init__(self, sync_collection):
         self._sync_collection = sync_collection
 
-    def find(self, *args, **kwargs):
+    async def find(self, *args, **kwargs):
         """Return an async cursor mock."""
         sync_cursor = self._sync_collection.find(*args, **kwargs)
         return AsyncCursorMock(sync_cursor)

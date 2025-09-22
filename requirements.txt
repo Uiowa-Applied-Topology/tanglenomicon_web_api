@@ -41,3 +41,4 @@ pygount
 typer
 sphinx-autobuild
 sphinx-material
+debugpy

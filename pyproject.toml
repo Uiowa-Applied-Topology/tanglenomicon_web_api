@@ -2,3 +2,7 @@
 addopts = [
     "--import-mode=importlib",
 ]
+
+[project]
+name = "data_api"
+version = "0.1.0"

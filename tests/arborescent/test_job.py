@@ -61,7 +61,10 @@ async def test_get_lists_positive(
         "state": 0,
         "rootstock_acn": 2,
         "scion_acn": 4,
-        "cursor": ["68c3886f35edfa4df81b1ba8", "68c3886f35edfa4df81b1b74"],
+        "cursor": [
+            ObjectId("68c3886f35edfa4df81b1ba8"),
+            ObjectId("68c3886f35edfa4df81b1b74"),
+        ],
     }
     # stub the db connection.
     job = ArborescentJob(
@@ -73,6 +76,7 @@ async def test_get_lists_positive(
     )
     job.set_jobdb(from_dict(data_class=orm.JobDB, data=job_db))
     await job.get_lists()
+    ...
 
 
 ################################################################################
